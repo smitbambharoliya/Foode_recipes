@@ -1,0 +1,207 @@
+/* auth.css */
+body {
+    background-color: #f4f7f6;
+    color: #333;
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.auth-container {
+    display: flex;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    overflow: hidden;
+    width: 900px;
+    max-width: 95%;
+    min-height: 550px;
+}
+
+.auth-form-section {
+    flex: 1;
+    padding: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    max-width: 50%;
+}
+
+.brand {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.brand i {
+    font-size: 1.8rem;
+}
+
+.auth-form-section h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: #111;
+}
+
+.auth-form-section p.subtitle {
+    color: #666;
+    margin-bottom: 30px;
+    font-size: 0.9rem;
+}
+
+.pill-input {
+    width: 100%;
+    padding: 15px 25px;
+    border-radius: 50px;
+    border: 1px solid #eee;
+    background: #fdfdfd;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
+    margin-bottom: 20px;
+    font-size: 1rem;
+    outline: none;
+    transition: box-shadow 0.3s;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+.pill-input:focus {
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.05), 0 0 0 2px #333;
+    background: #fff;
+}
+
+.pill-btn {
+    width: 150px;
+    padding: 15px 30px;
+    border-radius: 50px;
+    border: none;
+    background: #18181b;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.pill-btn:hover {
+    background: #3f3f46;
+    transform: translateY(-2px);
+}
+
+.auth-image-section {
+    flex: 1;
+    background: url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80') center/cover;
+    position: relative;
+    border-radius: 40px 0 0 40px;
+    transform: translateX(10px);
+}
+
+.auth-links {
+    margin-top: 30px;
+    font-size: 0.95rem;
+    color: #666;
+    text-align: center;
+}
+
+.auth-links p {
+    margin: 5px 0;
+}
+
+.auth-links a {
+    color: #111;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.auth-links a:hover {
+    color: #ff4757;
+    text-decoration: underline;
+}
+
+.alert {
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    background: #ffeaa7;
+    color: #d63031;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.footer-text {
+    position: absolute;
+    bottom: 20px;
+    left: 50px;
+    font-size: 0.8rem;
+    color: #999;
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+}
+.form-row .form-group {
+    flex: 1;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.checkbox-group input {
+    accent-color: #111;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.checkbox-group label {
+    cursor: pointer;
+}
+
+/* Hide number input arrows */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+select.pill-input {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat, repeat;
+    background-position: right 20px top 50%, 0 0;
+    background-size: .65em auto, 100%;
+}
+
+@media (max-width: 768px) {
+    .auth-container {
+        flex-direction: column;
+        width: 100%;
+        min-height: 100vh;
+        border-radius: 0;
+    }
+    .auth-image-section {
+        display: none;
+    }
+    .auth-form-section {
+        max-width: 100%;
+    }
+}

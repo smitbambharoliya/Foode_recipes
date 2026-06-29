@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Log in!{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('css/auth.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="auth-container">
+    <div class="auth-form-section">
+        <div class="brand">
+            <i class="fas fa-bowl-food"></i> Food Recipe
+        </div>
+        
+        <form method="post">
+            {% if error %}
+                <div class="alert">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            {% endif %}
+
+            <input type="email" value="{{ last_username }}" name="_username" id="username" class="pill-input" placeholder="Username or Email" autocomplete="email" required autofocus>
+            
+            <input type="password" name="_password" id="password" class="pill-input" placeholder="Password" autocomplete="current-password" required>
+
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+            <div class="checkbox-group">
+                <input type="checkbox" name="_remember_me" id="_remember_me">
+                <label for="_remember_me">Remember me</label>
+            </div>
+
+            <button class="pill-btn" type="submit">LOGIN</button>
+        </form>
+
+        <div class="auth-links">
+            <p>Don't have an account? <a href="{{ path('app_register') }}">Register here</a></p>
+            <p><a href="{{ path('app_home') }}">Back to Home</a></p>
+        </div>
+
+        <div class="footer-text">
+            &copy; 2026 Food Recipe LLC.
+        </div>
+    </div>
+    <div class="auth-image-section">
+    </div>
+</div>
+{% endblock %}
