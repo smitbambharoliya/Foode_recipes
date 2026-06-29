@@ -41,11 +41,28 @@ class Recipe
     #[ORM\ManyToOne(inversedBy: 'recipes')]
     private ?Region $region = null;
 
+    /**
+     * @var Collection<int, RecipeView>
+     */
+    #[ORM\OneToMany(targetEntity: RecipeView::class, mappedBy: 'recipe', cascade: ['persist', 'remove'])]
+    private Collection $recipeViews;
+
+    
+
+    /**
+     * @var Collection<int, Review>
+     */
+    #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'recipe', cascade:['persist', 'remove'])]
+    private Collection $reviews;
+
 
 
     public function __construct()
     {
         $this->ingredients = new ArrayCollection();
+        $this->recipeViews = new ArrayCollection();
+        
+        $this->reviews = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -151,6 +168,69 @@ class Recipe
     public function setRegion(?Region $region): static
     {
         $this->region = $region;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, RecipeView>
+     */
+    public function getRecipeViews(): Collection
+    {
+        return $this->recipeViews;
+    }
+
+    public function addRecipeView(RecipeView $recipeView): static
+    {
+        if (!$this->recipeViews->contains($recipeView)) {
+            $this->recipeViews->add($recipeView);
+            $recipeView->setRecipe($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRecipeView(RecipeView $recipeView): static
+    {
+        if ($this->recipeViews->removeElement($recipeView)) {
+            // set the owning side to null (unless already changed)
+            if ($recipeView->getRecipe() === $this) {
+                $recipeView->setRecipe(null);
+            }
+        }
+
+        return $this;
+    }
+
+    
+  
+
+    /**
+     * @return Collection<int, Review>
+     */
+    public function getReviews(): Collection
+    {
+        return $this->reviews;
+    }
+
+    public function addReview(Review $review): static
+    {
+        if (!$this->reviews->contains($review)) {
+            $this->reviews->add($review);
+            $review->setRecipe($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReview(Review $review): static
+    {
+        if ($this->reviews->removeElement($review)) {
+            // set the owning side to null (unless already changed)
+            if ($review->getRecipe() === $this) {
+                $review->setRecipe(null);
+            }
+        }
 
         return $this;
     }

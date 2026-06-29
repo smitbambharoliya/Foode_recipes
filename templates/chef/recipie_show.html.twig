@@ -1,0 +1,194 @@
+{% extends 'chef/layout.html.twig' %}
+
+{% block page_title %}{{ recipe.title }} - Chef View{% endblock %}
+
+{% block chef_styles %}
+<style>
+    .recipe-detail-card {
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.03);
+        border: 1px solid #f0f0f0;
+        padding: 40px;
+        margin-bottom: 40px;
+    }
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #888;
+        text-decoration: none;
+        font-weight: 500;
+        margin-bottom: 25px;
+        transition: color 0.3s;
+    }
+    .back-btn:hover {
+        color: #ff5722;
+    }
+    .recipe-meta-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        margin-bottom: 40px;
+    }
+    @media (max-width: 768px) {
+        .recipe-meta-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    .recipe-image-preview {
+        width: 100%;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        height: 300px;
+        background: #f8f9fa;
+        position: relative;
+    }
+    .recipe-image-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .no-img-preview {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: #aaa;
+        flex-direction: column;
+    }
+    .info-item {
+        margin-bottom: 20px;
+    }
+    .info-label {
+        font-weight: 600;
+        color: #888;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        margin-bottom: 5px;
+        display: block;
+    }
+    .info-value {
+        font-size: 1.1rem;
+        color: #222;
+        font-weight: 600;
+    }
+    .panel-section {
+        border-top: 1px dashed #eee;
+        padding-top: 30px;
+        margin-top: 30px;
+    }
+    .ingredients-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .ingredients-table th {
+        text-align: left;
+        color: #888;
+        font-weight: 600;
+        font-size: 0.85rem;
+        padding: 10px;
+        border-bottom: 2px solid #f8f9fa;
+    }
+    .ingredients-table td {
+        padding: 12px 10px;
+        border-bottom: 1px solid #f8f9fa;
+    }
+    .action-row {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+    }
+</style>
+{% endblock %}
+
+{% block chef_content %}
+    <a href="{{ path('app_chef_recipie') }}" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back to Food Menu
+    </a>
+
+    <div class="recipe-detail-card">
+        <div class="recipe-meta-grid">
+            <div class="recipe-image-preview">
+                {% if recipe.image %}
+                    <img src="{{ asset('uploads/recipes/' ~ recipe.image) }}" alt="{{ recipe.title }}">
+                {% else %}
+                    <div class="no-img-preview">
+                        <i class="fas fa-camera fa-3x" style="margin-bottom: 15px;"></i>
+                        <span>No image uploaded</span>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div style="display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                    <h2 style="font-size: 2.2rem; font-weight:700; margin: 0 0 20px 0; color: #111;">{{ recipe.title }}</h2>
+                    
+                    <div class="info-item">
+                        <span class="info-label">Cuisine / Region</span>
+                        <span class="info-value">{{ recipe.region ? recipe.region.name : 'Global' }}</span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <span class="info-label">Base Servings</span>
+                        <span class="info-value">{{ recipe.baseServings }} servings</span>
+                    </div>
+
+                    <div class="info-item">
+                        <span class="info-label">Popularity</span>
+                        <span class="info-value">
+                            <i class="fas fa-eye" style="color:#ff5722;"></i> {{ recipe.recipeViews|length }} Views
+                        </span>
+                    </div>
+                </div>
+
+                <div class="action-row">
+                    <a href="{{ path('app_chef_recipie_edit', {'id': recipe.id}) }}" class="btn-primary" style="padding: 10px 25px;">
+                        <i class="fas fa-pen"></i> Edit Recipe
+                    </a>
+                    
+                    <form method="post" action="{{ path('app_chef_recipie_delete', {'id': recipe.id}) }}" style="display: inline-block;" onsubmit="return confirm('Are you sure you want to delete this recipe?');">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button type="submit" class="btn-outline" style="border-color: #ef4444; color: #ef4444; background: transparent; padding: 8px 23px;">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-section">
+            <h3 class="section-title"><i class="fas fa-carrot" style="color: #ff5722; margin-right: 5px;"></i> Ingredients</h3>
+            <table class="ingredients-table">
+                <thead>
+                    <tr>
+                        <th>Ingredient</th>
+                        <th>Base Quantity</th>
+                        <th>Unit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ingredient in recipe.ingredients %}
+                        <tr>
+                            <td style="font-weight: 500;">{{ ingredient.name }}</td>
+                            <td style="color: #ff5722; font-weight: 600;">{{ ingredient.baseQuantity }}</td>
+                            <td>{{ ingredient.unit }}</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="3" style="text-align: center; color: #888;">No ingredients specified.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="panel-section">
+            <h3 class="section-title"><i class="fas fa-list-ol" style="color: #ff5722; margin-right: 5px;"></i> Cooking Instructions</h3>
+            <div style="line-height: 1.8; color: #555; white-space: pre-line;">
+                {{ recipe.instructions }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

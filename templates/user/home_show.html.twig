@@ -1,0 +1,790 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ recipe.title }} - Foode Recipes{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #ff5722;
+            --primary-hover: #e64a19;
+            --primary-light: #fff5f2;
+            --dark: #0f172a;
+            --gray-light: #f8fafc;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.5);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #fef2f2 0%, #fff7ed 50%, #f0fdf4 100%);
+            background-attachment: fixed;
+            margin: 0;
+            color: var(--text-main);
+            min-height: 100vh;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 30px;
+            box-sizing: border-box;
+        }
+
+        .logo {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        /* Container */
+        .details-container {
+            max-width: 1100px;
+            margin: 40px auto 80px;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 25px;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+        }
+
+        /* Hero details split layout */
+        .recipe-header-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .recipe-header-card {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .recipe-hero-image {
+            position: relative;
+            min-height: 350px;
+            background: #cbd5e1;
+        }
+
+        .recipe-hero-image img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .no-image-hero {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #94a3b8 0%, #475569 100%);
+            color: #fff;
+        }
+
+        .recipe-header-info {
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .badge-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .info-badge {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .recipe-title-large {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--dark);
+            margin: 0 0 15px 0;
+            line-height: 1.2;
+            letter-spacing: -1px;
+        }
+
+        .chef-author {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-bottom: 30px;
+        }
+
+        .chef-author img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+        }
+
+        /* Two Column Body layout */
+        .recipe-body-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        @media (max-width: 768px) {
+            .recipe-body-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .recipe-panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: var(--shadow-sm);
+            height: fit-content;
+        }
+
+        .panel-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin: 0 0 25px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        .panel-title i {
+            color: var(--primary);
+        }
+
+        /* Scaling Widget */
+        .scaling-widget {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .scaling-widget label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+
+        .scaling-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .scaling-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: var(--gray-light);
+            color: var(--dark);
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .scaling-btn:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+
+        .scaling-input {
+            width: 60px;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 700;
+            border: none;
+            outline: none;
+            color: var(--dark);
+        }
+
+        /* Ingredients List */
+        .ingredients-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .ingredient-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .ingredient-row:last-child {
+            border-bottom: none;
+        }
+
+        .ingredient-name {
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        .ingredient-qty {
+            font-weight: 700;
+            color: var(--primary);
+            background: var(--primary-light);
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        /* Instructions Text */
+        .instructions-text {
+            line-height: 1.8;
+            font-size: 1.05rem;
+            color: var(--text-main);
+            white-space: pre-line;
+        }
+
+        /* Review Section */
+        .reviews-section {
+            margin-top: 60px;
+            border-top: 1px solid var(--border);
+            padding-top: 40px;
+        }
+
+        .reviews-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .reviews-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .review-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .review-author {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .review-date {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .review-content {
+            color: var(--text-main);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        /* Comment Form */
+        .comment-form-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: var(--shadow-sm);
+            height: fit-content;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .pill-input {
+            width: 100%;
+            padding: 14px 20px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            font-size: 0.95rem;
+            outline: none;
+            font-family: inherit;
+            box-sizing: border-box;
+            transition: all 0.3s;
+        }
+
+        .pill-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.15);
+        }
+
+        /* Interactive Star Rating CSS */
+        .star-rating-selector {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+            gap: 8px;
+            font-size: 1.8rem;
+        }
+
+        .star-rating-selector input {
+            display: none;
+        }
+
+        .star-rating-selector label {
+            color: #cbd5e1;
+            cursor: pointer;
+            transition: color 0.2s;
+            margin: 0;
+        }
+
+        .star-rating-selector label:hover,
+        .star-rating-selector label:hover ~ label,
+        .star-rating-selector input:checked ~ label {
+            color: #ffb703;
+        }
+
+        /* Buttons */
+        .btn-submit {
+            width: 100%;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 14px;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-hover);
+        }
+
+        /* Errors and flashes */
+        .form-error {
+            color: #ef4444;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+        .flash-messages {
+            margin-bottom: 25px;
+        }
+        .flash-alert {
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        .flash-alert-success {
+            background-color: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+        .flash-alert-error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <header>
+        <div class="nav-container">
+            <a href="{{ path('app_home') }}" class="logo">
+                <i class="fas fa-burger"></i> foodchef
+            </a>
+            <ul class="nav-links">
+                <li><a href="{{ path('app_home') }}">Home</a></li>
+                {% if app.user %}
+                    {% if is_granted('ROLE_CHEF') %}
+                        <li><a href="{{ path('app_chef_deshbord') }}">Chef Panel</a></li>
+                    {% endif %}
+                    <li><a href="{{ path('app_logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                {% else %}
+                    <li><a href="{{ path('app_login') }}"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                    <li><a href="{{ path('app_register') }}"><i class="fas fa-user-plus"></i> Register</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </header>
+
+    <div class="details-container">
+        <a href="{{ path('app_home') }}" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Recipes
+        </a>
+
+        {# Recipe Hero Header Card #}
+        <div class="recipe-header-card">
+            <div class="recipe-hero-image">
+                {% if recipe.image %}
+                    <img src="{{ asset('uploads/recipes/' ~ recipe.image) }}" alt="{{ recipe.title }}">
+                {% else %}
+                    <div class="no-image-hero">
+                        <i class="fas fa-utensils fa-4x" style="margin-bottom: 15px;"></i>
+                        <span>No image provided</span>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="recipe-header-info">
+                <div class="badge-row">
+                    <span class="info-badge"><i class="fas fa-map-marker-alt"></i> {{ recipe.region ? recipe.region.name : 'Global' }}</span>
+                    <span class="info-badge"><i class="fas fa-users"></i> Serves {{ recipe.baseServings }}</span>
+                </div>
+                
+                <h1 class="recipe-title-large">{{ recipe.title }}</h1>
+                
+                <div class="chef-author">
+                    <img src="https://ui-avatars.com/api/?name={{ recipe.chef.name }}&background=ff5722&color=fff" alt="Chef Avatar">
+                    <span>Published by <strong>Chef {{ recipe.chef.name }}</strong></span>
+                </div>
+            </div>
+        </div>
+
+        {# Recipe Details Body #}
+        <div class="recipe-body-grid">
+            {# Left Column: Portions scaling & Ingredients #}
+            <div class="recipe-panel">
+                <h3 class="panel-title"><i class="fas fa-carrot"></i> Ingredients</h3>
+                
+                {# Portion Calculator #}
+                <div class="scaling-widget">
+                    <label for="servings-input">Portion Calculator (Servings)</label>
+                    <div class="scaling-controls">
+                        <button type="button" class="scaling-btn" id="scaling-minus">-</button>
+                        <input type="number" id="servings-input" class="scaling-input" value="{{ recipe.baseServings }}" min="1" max="100" data-base-servings="{{ recipe.baseServings }}">
+                        <button type="button" class="scaling-btn" id="scaling-plus">+</button>
+                    </div>
+                </div>
+
+                <ul class="ingredients-list">
+                    {% for ingredient in recipe.ingredients %}
+                        <li class="ingredient-row" data-base-qty="{{ ingredient.baseQuantity }}">
+                            <span class="ingredient-name">{{ ingredient.name }}</span>
+                            <span class="ingredient-qty-container">
+                                <span class="ingredient-qty-val">{{ ingredient.baseQuantity }}</span>
+                                <span class="ingredient-unit">{{ ingredient.unit }}</span>
+                            </span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            {# Right Column: Instructions #}
+            <div class="recipe-panel">
+                <h3 class="panel-title"><i class="fas fa-list-check"></i> Instructions</h3>
+                <div class="instructions-text">
+                    {{ recipe.instructions }}
+                </div>
+            </div>
+        </div>
+
+        {# Reviews & Feedback Section #}
+        <div class="reviews-section">
+            <div class="reviews-header">
+                <h2 style="font-weight:800; font-size: 1.8rem; color: var(--dark); margin:0;">Reviews & Comments</h2>
+                
+                {# Overall rating #}
+                {% set totalRating = 0 %}
+                {% set reviewsLength = recipe.reviews|length %}
+                {% if reviewsLength > 0 %}
+                    {% for r in recipe.reviews %}
+                        {% set totalRating = totalRating + r.rating %}
+                    {% endfor %}
+                    {% set avgRating = (totalRating / reviewsLength) %}
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span style="font-weight:700; font-size: 1.3rem;">{{ avgRating|number_format(1) }}</span>
+                        <span style="color:#ffb703; font-size: 1.3rem;"><i class="fas fa-star"></i></span>
+                        <span style="color:var(--text-muted);">({{ reviewsLength }} reviews)</span>
+                    </div>
+                {% else %}
+                    <span style="color:var(--text-muted);">No reviews yet</span>
+                {% endif %}
+            </div>
+
+            {% for label, messages in app.flashes %}
+                <div class="flash-messages">
+                    {% for message in messages %}
+                        <div class="flash-alert flash-alert-{{ label }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+
+            <div class="reviews-grid">
+                {# Comments Feed #}
+                <div>
+                    {% for review in recipe.reviews %}
+                        <div class="review-card">
+                            <div class="review-header">
+                                <div>
+                                    <span class="review-author">{{ review.user.name }}</span>
+                                    <div style="color: #ffb703; font-size: 0.85rem; margin-top: 3px;">
+                                        {% for i in 1..5 %}
+                                            {% if review.rating >= i %}
+                                                <i class="fas fa-star"></i>
+                                            {% else %}
+                                                <i class="far fa-star"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <span class="review-date">{{ review.createdAt|date('F d, Y - h:i A') }}</span>
+                            </div>
+                            <p class="review-content">{{ review.content }}</p>
+                        </div>
+                    {% else %}
+                        <div style="text-align: center; padding: 40px; background: #fff; border-radius: 20px; border: 1px dashed var(--border);">
+                            <i class="far fa-comments fa-3x" style="color: var(--text-muted); margin-bottom: 15px;"></i>
+                            <p style="color: var(--text-muted); margin:0;">No reviews on this recipe yet. Be the first to share your thoughts!</p>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                {# Add Comment Form #}
+                <div>
+                    <div class="comment-form-card">
+                        {% if app.user %}
+                            <h3 style="margin-top:0; margin-bottom: 20px; font-weight:700;">Add Your Review</h3>
+                            
+                            {{ form_start(reviewForm, {'attr': {'novalidate': 'novalidate'}}) }}
+                                <div class="form-group">
+                                    <label>Your Rating</label>
+                                    {# Custom Interactive Star Selector Widget #}
+                                    <div class="star-rating-selector">
+                                        <input type="radio" id="star_5" name="{{ reviewForm.rating.vars.full_name }}" value="5" {% if reviewForm.rating.vars.value == 5 %}checked{% endif %}>
+                                        <label for="star_5"><i class="fas fa-star"></i></label>
+                                        <input type="radio" id="star_4" name="{{ reviewForm.rating.vars.full_name }}" value="4" {% if reviewForm.rating.vars.value == 4 %}checked{% endif %}>
+                                        <label for="star_4"><i class="fas fa-star"></i></label>
+                                        <input type="radio" id="star_3" name="{{ reviewForm.rating.vars.full_name }}" value="3" {% if reviewForm.rating.vars.value == 3 %}checked{% endif %}>
+                                        <label for="star_3"><i class="fas fa-star"></i></label>
+                                        <input type="radio" id="star_2" name="{{ reviewForm.rating.vars.full_name }}" value="2" {% if reviewForm.rating.vars.value == 2 %}checked{% endif %}>
+                                        <label for="star_2"><i class="fas fa-star"></i></label>
+                                        <input type="radio" id="star_1" name="{{ reviewForm.rating.vars.full_name }}" value="1" {% if reviewForm.rating.vars.value == 1 or reviewForm.rating.vars.value is empty %}checked{% endif %}>
+                                        <label for="star_1"><i class="fas fa-star"></i></label>
+                                    </div>
+                                    <div class="form-error">
+                                        {{ form_errors(reviewForm.rating) }}
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    {{ form_label(reviewForm.content, 'Your Comment') }}
+                                    {{ form_widget(reviewForm.content) }}
+                                    <div class="form-error">
+                                        {{ form_errors(reviewForm.content) }}
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn-submit">
+                                    <i class="fas fa-paper-plane"></i> Submit Feedback
+                                </button>
+                            {{ form_end(reviewForm) }}
+                        {% else %}
+                            <h3 style="margin-top:0; margin-bottom: 15px; font-weight:700;">Add Your Review</h3>
+                            <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px; line-height: 1.5;">You must be logged in to share a review about this recipe.</p>
+                            <a href="{{ path('app_login') }}" class="btn-submit" style="text-decoration: none;">
+                                <i class="fas fa-sign-in-alt"></i> Log In to Review
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const servingsInput = document.getElementById('servings-input');
+        const btnMinus = document.getElementById('scaling-minus');
+        const btnPlus = document.getElementById('scaling-plus');
+        const baseServings = parseFloat(servingsInput.dataset.baseServings);
+        const ingredientRows = document.querySelectorAll('.ingredient-row');
+
+        function scaleIngredients(targetServings) {
+            if (isNaN(targetServings) || targetServings < 1) return;
+            
+            fetch(`/api/recipe/{{ recipe.id }}/scale?servings=${targetServings}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.ingredients) {
+                        const ingredientList = document.querySelector('.ingredients-list');
+                        ingredientList.innerHTML = '';
+                        data.ingredients.forEach(ingredient => {
+                            const li = document.createElement('li');
+                            li.className = 'ingredient-row';
+                            li.dataset.baseQty = ingredient.amount;
+                            li.innerHTML = `
+                                <span class="ingredient-name">${ingredient.name}</span>
+                                <span class="ingredient-qty-container">
+                                    <span class="ingredient-qty-val">${ingredient.amount}</span>
+                                    <span class="ingredient-unit">${ingredient.unit || ''}</span>
+                                </span>
+                            `;
+                            ingredientList.appendChild(li);
+                        });
+                    }
+                })
+                .catch(err => console.error('Error scaling ingredients:', err));
+        }
+
+        servingsInput.addEventListener('input', function() {
+            let value = parseInt(servingsInput.value);
+            if (value < 1) {
+                value = 1;
+                servingsInput.value = 1;
+            }
+            scaleIngredients(value);
+        });
+
+        btnMinus.addEventListener('click', function() {
+            let currentValue = parseInt(servingsInput.value);
+            if (currentValue > 1) {
+                servingsInput.value = currentValue - 1;
+                scaleIngredients(currentValue - 1);
+            }
+        });
+
+        btnPlus.addEventListener('click', function() {
+            let currentValue = parseInt(servingsInput.value);
+            if (currentValue < 100) {
+                servingsInput.value = currentValue + 1;
+                scaleIngredients(currentValue + 1);
+            }
+        });
+        
+        // Initial scaling in case default is different
+        scaleIngredients(parseInt(servingsInput.value));
+    });
+    </script>
+{% endblock %}

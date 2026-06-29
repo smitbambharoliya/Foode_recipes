@@ -45,10 +45,13 @@
                         <span><i class="fas fa-map-marker-alt"></i> {{ recipe.region ? recipe.region.name : 'Global' }}</span>
                     </div>
                     
-                    <div class="card-actions">
-                        <button class="btn-icon btn-edit" title="Edit"><i class="fas fa-pen"></i></button>
+                    <div class="card-actions" style="align-items: center;">
+                        <a href="{{ path('app_chef_recipie_edit', {'id': recipe.id}) }}" class="btn-icon btn-edit" title="Edit" style="text-decoration: none;"><i class="fas fa-pen"></i></a>
                         <a href="{{ path('app_chef_recipie_show', {'id': recipe.id}) }}" class="btn-view">View</a>
-                        <button class="btn-icon btn-delete" title="Delete"><i class="fas fa-trash"></i></button>
+                        <form method="post" action="{{ path('app_chef_recipie_delete', {'id': recipe.id}) }}" onsubmit="return confirm('Are you sure you want to delete this recipe?');" style="margin: 0;">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit" class="btn-icon btn-delete" title="Delete"><i class="fas fa-trash"></i></button>
+                        </form>
                     </div>
                 </div>
             {% endfor %}

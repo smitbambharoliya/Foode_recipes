@@ -2,22 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\Recipe;
+use App\Entity\Review;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Recipe>
+ * @extends ServiceEntityRepository<Review>
  */
-class RecipeRepository extends ServiceEntityRepository
+class ReviewRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Recipe::class);
+        parent::__construct($registry, Review::class);
     }
 
     //    /**
-    //     * @return Recipe[] Returns an array of Recipe objects
+    //     * @return Review[] Returns an array of Review objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -31,7 +31,7 @@ class RecipeRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?Recipe
+    //    public function findOneBySomeField($value): ?Review
     //    {
     //        return $this->createQueryBuilder('r')
     //            ->andWhere('r.exampleField = :val')
@@ -39,13 +39,5 @@ class RecipeRepository extends ServiceEntityRepository
     //            ->getQuery()
     //            ->getOneOrNullResult()
     //        ;
-    public function findAllWithViewCount(): array
-    {
-        return $this->createQueryBuilder('r')
-            ->select('r as recipe', 'COUNT(v.id) as viewCount')
-            ->leftJoin('r.recipeViews', 'v')
-            ->groupBy('r.id')
-            ->getQuery()
-            ->getResult();
-    }
+    //    }
 }

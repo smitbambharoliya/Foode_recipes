@@ -61,9 +61,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Recipe::class, mappedBy: 'chef')]
     private Collection $recipes;
 
+    /**
+     * @var Collection<int, RecipeView>
+     */
+    #[ORM\OneToMany(targetEntity: RecipeView::class, mappedBy: 'user')]
+    private Collection $recipeViews;
+
+
+
+    /**
+     * @var Collection<int, Review>
+     */
+    #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'user')]
+    private Collection $reviews;
+
     public function __construct()
     {
         $this->recipes = new ArrayCollection();
+        $this->recipeViews = new ArrayCollection();
+
+        $this->reviews = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -243,6 +260,68 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($recipe->getChef() === $this) {
                 $recipe->setChef(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, RecipeView>
+     */
+    public function getRecipeViews(): Collection
+    {
+        return $this->recipeViews;
+    }
+
+    public function addRecipeView(RecipeView $recipeView): static
+    {
+        if (!$this->recipeViews->contains($recipeView)) {
+            $this->recipeViews->add($recipeView);
+            $recipeView->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRecipeView(RecipeView $recipeView): static
+    {
+        if ($this->recipeViews->removeElement($recipeView)) {
+            // set the owning side to null (unless already changed)
+            if ($recipeView->getUser() === $this) {
+                $recipeView->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+  
+
+    /**
+     * @return Collection<int, Review>
+     */
+    public function getReviews(): Collection
+    {
+        return $this->reviews;
+    }
+
+    public function addReview(Review $review): static
+    {
+        if (!$this->reviews->contains($review)) {
+            $this->reviews->add($review);
+            $review->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReview(Review $review): static
+    {
+        if ($this->reviews->removeElement($review)) {
+            // set the owning side to null (unless already changed)
+            if ($review->getUser() === $this) {
+                $review->setUser(null);
             }
         }
 

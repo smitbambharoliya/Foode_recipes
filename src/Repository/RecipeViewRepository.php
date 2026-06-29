@@ -3,21 +3,23 @@
 namespace App\Repository;
 
 use App\Entity\Recipe;
+use App\Entity\RecipeView;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Recipe>
+ * @extends ServiceEntityRepository<RecipeView>
  */
-class RecipeRepository extends ServiceEntityRepository
+class RecipeViewRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Recipe::class);
+        parent::__construct($registry, RecipeView::class);
     }
 
     //    /**
-    //     * @return Recipe[] Returns an array of Recipe objects
+    //     * @return RecipeView[] Returns an array of RecipeView objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -31,7 +33,7 @@ class RecipeRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?Recipe
+    //    public function findOneBySomeField($value): ?RecipeView
     //    {
     //        return $this->createQueryBuilder('r')
     //            ->andWhere('r.exampleField = :val')
@@ -39,13 +41,22 @@ class RecipeRepository extends ServiceEntityRepository
     //            ->getQuery()
     //            ->getOneOrNullResult()
     //        ;
-    public function findAllWithViewCount(): array
+    //    }
+    public function hasUserViewedRecipe(User $user,Recipe $recipe): bool
     {
-        return $this->createQueryBuilder('r')
-            ->select('r as recipe', 'COUNT(v.id) as viewCount')
-            ->leftJoin('r.recipeViews', 'v')
-            ->groupBy('r.id')
+        $oneHourAgo = new \DateTimeImmutable('-1 hour');
+
+        $count = $this->createQueryBuilder('v')
+            ->select('COUNT(v.id)')
+            ->andWhere('v.user = :user')
+            ->andWhere('v.recipe = :recipe')
+            ->andWhere('v.viewedAt > :oneHourAgo')
+            ->setParameter('user', $user)
+            ->setParameter('recipe', $recipe)
+            ->setParameter('oneHourAgo', $oneHourAgo)
             ->getQuery()
-            ->getResult();
+            ->getSingleScalarResult();
+
+        return $count > 0;
     }
 }

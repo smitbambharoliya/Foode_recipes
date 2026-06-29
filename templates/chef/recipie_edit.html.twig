@@ -1,0 +1,168 @@
+{% extends 'chef/layout.html.twig' %}
+
+{% block page_title %}Edit Recipe: {{ recipe.title }}{% endblock %}
+
+{% block chef_styles %}
+<style>
+    .custom-file-upload {
+        border: 2px dashed #ddd;
+        display: inline-block;
+        padding: 20px;
+        cursor: pointer;
+        width: 100%;
+        text-align: center;
+        border-radius: 15px;
+        transition: all 0.3s;
+        box-sizing: border-box;
+        background: #fafafa;
+    }
+    .custom-file-upload:hover {
+        border-color: #ff5722;
+        background: #f0f0f0;
+    }
+    .current-image-preview {
+        max-width: 200px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        margin-bottom: 15px;
+        display: block;
+    }
+</style>
+{% endblock %}
+
+{% block chef_content %}
+    <div style="margin-bottom: 25px;">
+        <a href="{{ path('app_chef_recipie') }}" style="color: #888; text-decoration: none; font-weight: 500;">
+            <i class="fas fa-arrow-left"></i> Back to Food Menu
+        </a>
+    </div>
+
+    <h2 class="section-title">Edit Recipe Details</h2>
+
+    <div class="card" style="max-width: 800px;">
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'enctype': 'multipart/form-data'}}) }}
+            
+            <div class="form-group">
+                {{ form_label(form.title, 'Recipe Title') }}
+                {{ form_widget(form.title, {'attr': {'class': 'pill-input', 'placeholder': 'e.g. Paneer Tikka Masala'}}) }}
+                {{ form_errors(form.title) }}
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.instructions, 'Cooking Instructions') }}
+                {{ form_widget(form.instructions, {'attr': {'class': 'pill-input', 'placeholder': 'Step 1: ...'}}) }}
+                {{ form_errors(form.instructions) }}
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form_label(form.base_servings, 'Servings') }}
+                    {{ form_widget(form.base_servings) }}
+                    {{ form_errors(form.base_servings) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.region_name) }}
+                    {{ form_widget(form.region_name) }}
+                    {{ form_errors(form.region_name) }}
+                    <datalist id="region-list">
+                        {% for r in regions %}
+                            <option value="{{ r.name }}">
+                        {% endfor %}
+                    </datalist>
+                </div>
+            </div>
+
+            <div class="form-group" style="background: #f8f9fa; padding: 20px; border-radius: 15px; border: 1px dashed #ddd; margin-bottom: 20px;">
+                <label style="font-size: 1.1rem; color: #ff5722; margin-bottom: 15px;"><i class="fas fa-carrot"></i> Ingredients</label>
+                <div class="ingredients-wrapper"
+                     data-index="{{ form.ingredients|length > 0 ? form.ingredients|last.vars.name + 1 : 0 }}"
+                     data-prototype="
+                         &lt;div class='form-row ingredient-item' style='align-items: center; margin-bottom: 10px; background: #fff; padding: 10px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);'&gt;
+                             &lt;div class='form-group' style='margin: 0; flex: 2;'&gt;{{ form_widget(form.ingredients.vars.prototype.name)|e('html_attr') }}&lt;/div&gt;
+                             &lt;div class='form-group' style='margin: 0; flex: 1;'&gt;{{ form_widget(form.ingredients.vars.prototype.base_quantity)|e('html_attr') }}&lt;/div&gt;
+                             &lt;div class='form-group' style='margin: 0; flex: 1;'&gt;{{ form_widget(form.ingredients.vars.prototype.unit)|e('html_attr') }}&lt;/div&gt;
+                             &lt;button type='button' class='btn-icon btn-delete remove-ingredient' style='margin-left: 10px;'&gt;&lt;i class='fas fa-times'&gt;&lt;/i&gt;&lt;/button&gt;
+                         &lt;/div&gt;
+                     ">
+                    
+                    <div id="ingredient-fields-list">
+                        {% for ingredient in form.ingredients %}
+                            <div class="form-row ingredient-item" style="align-items: center; margin-bottom: 10px; background: #fff; padding: 10px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
+                                <div class="form-group" style="margin: 0; flex: 2;">{{ form_widget(ingredient.name) }}</div>
+                                <div class="form-group" style="margin: 0; flex: 1;">{{ form_widget(ingredient.base_quantity) }}</div>
+                                <div class="form-group" style="margin: 0; flex: 1;">{{ form_widget(ingredient.unit) }}</div>
+                                <button type="button" class="btn-icon btn-delete remove-ingredient" style="margin-left: 10px;"><i class="fas fa-times"></i></button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <button type="button" class="btn-outline add-another-ingredient" style="margin-top: 15px; width: 100%;">
+                        <i class="fas fa-plus"></i> Add Ingredient
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Recipe Image</label>
+                {% if recipe.image %}
+                    <div style="margin-bottom: 10px;">
+                        <span style="font-size: 0.85rem; color: #888; display: block; margin-bottom: 5px;">Current Image:</span>
+                        <img src="{{ asset('uploads/recipes/' ~ recipe.image) }}" alt="Preview" class="current-image-preview">
+                    </div>
+                {% endif %}
+                
+                <label class="custom-file-upload">
+                    <i class="fas fa-cloud-upload-alt fa-2x" style="color: #666; margin-bottom: 10px;"></i><br>
+                    Click to upload a new photo (leaves current image unchanged if blank)
+                    {{ form_widget(form.image, {'attr': {'style': 'display: none;'}}) }}
+                </label>
+                <div style="color: red; font-size: 0.9em; margin-top: 5px;">
+                    {{ form_errors(form.image) }}
+                </div>
+            </div>
+
+            <button type="submit" class="btn-primary" style="width: 100%; margin-top: 20px; padding: 15px; font-size: 1.1rem;">
+                <i class="fas fa-save"></i> Update Recipe
+            </button>
+
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const wrapper = document.querySelector('.ingredients-wrapper');
+    const list = document.getElementById('ingredient-fields-list');
+    const addButton = document.querySelector('.add-another-ingredient');
+    
+    // Add new ingredient
+    addButton.addEventListener('click', function(e) {
+        let prototype = wrapper.dataset.prototype;
+        let index = wrapper.dataset.index;
+        
+        let newForm = prototype.replace(/__name__/g, index);
+        wrapper.dataset.index = parseInt(index) + 1;
+        
+        let tempDiv = document.createElement('div');
+        tempDiv.innerHTML = newForm.trim();
+        let newElement = tempDiv.firstChild;
+        
+        list.appendChild(newElement);
+    });
+    
+    // Remove ingredient
+    list.addEventListener('click', function(e) {
+        if(e.target.closest('.remove-ingredient')) {
+            e.target.closest('.ingredient-item').remove();
+        }
+    });
+    
+    // Add one empty ingredient row by default if the list is empty
+    if(list.children.length === 0) {
+        addButton.click();
+    }
+});
+</script>
+{% endblock %}

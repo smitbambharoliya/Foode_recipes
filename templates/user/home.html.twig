@@ -1,0 +1,447 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Recipes - Foode Recipes{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #ff5722;
+            --primary-hover: #e64a19;
+            --primary-light: #fff5f2;
+            --dark: #0f172a;
+            --gray-light: #f8fafc;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --glass-bg: rgba(255, 255, 255, 0.8);
+            --glass-border: rgba(255, 255, 255, 0.4);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #fef2f2 0%, #fff7ed 50%, #f0fdf4 100%);
+            background-attachment: fixed;
+            margin: 0;
+            color: var(--text-main);
+            min-height: 100vh;
+        }
+
+        /* Premium Header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 30px;
+            box-sizing: border-box;
+        }
+
+        .logo {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .logo i {
+            transform: rotate(-10deg);
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover i {
+            transform: rotate(10deg) scale(1.1);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links .active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .btn-chef-panel {
+            background: var(--primary-light);
+            color: var(--primary) !important;
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-weight: 600 !important;
+            border: 1px solid rgba(255, 87, 34, 0.15);
+            transition: all 0.3s !important;
+        }
+
+        .btn-chef-panel:hover {
+            background: var(--primary);
+            color: #fff !important;
+            box-shadow: 0 4px 10px rgba(255, 87, 34, 0.2);
+        }
+
+        /* Banner section */
+        .page-banner {
+            max-width: 1200px;
+            margin: 40px auto 20px;
+            padding: 0 30px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .page-banner h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin: 0 0 10px 0;
+            color: var(--dark);
+            letter-spacing: -1px;
+        }
+
+        .page-banner p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin: 0;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Main Grid */
+        .recipes-section {
+            max-width: 1200px;
+            margin: 20px auto 60px;
+            padding: 0 30px;
+            box-sizing: border-box;
+        }
+
+        .recipes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .recipe-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(255, 87, 34, 0.2);
+        }
+
+        .card-image-wrapper {
+            position: relative;
+            padding-bottom: 65%; /* 3:2 Aspect Ratio */
+            overflow: hidden;
+            background: #e2e8f0;
+        }
+
+        .card-image-wrapper img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .recipe-card:hover .card-image-wrapper img {
+            transform: scale(1.08);
+        }
+
+        .no-image-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%);
+            color: #fff;
+        }
+
+        .cuisine-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .views-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--dark);
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card-content {
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .recipe-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin: 0 0 10px 0;
+            line-height: 1.3;
+            transition: color 0.3s;
+        }
+
+        .recipe-card:hover .recipe-title {
+            color: var(--primary);
+        }
+
+        .recipe-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 15px;
+        }
+
+        .rating-stars {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            color: #ffb703;
+        }
+
+        .rating-text {
+            font-weight: 600;
+            color: var(--dark);
+            margin-left: 4px;
+        }
+
+        .btn-view-recipe {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: var(--dark);
+            color: #fff;
+            padding: 12px;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            margin-top: auto;
+        }
+
+        .recipe-card:hover .btn-view-recipe {
+            background: var(--primary);
+            box-shadow: 0 5px 15px rgba(255, 87, 34, 0.3);
+        }
+
+        /* Flash messages styling */
+        .flash-messages {
+            max-width: 1200px;
+            margin: 20px auto 0;
+            padding: 0 30px;
+            box-sizing: border-box;
+        }
+        .flash-alert {
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+        .flash-alert-success {
+            background-color: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+        .flash-alert-error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <header>
+        <div class="nav-container">
+            <a href="{{ path('app_home') }}" class="logo">
+                <i class="fas fa-burger"></i> foodchef
+            </a>
+            <ul class="nav-links">
+                <li><a href="{{ path('app_home') }}" class="active">Home</a></li>
+                {% if app.user %}
+                    {% if is_granted('ROLE_CHEF') %}
+                        <li><a href="{{ path('app_chef_deshbord') }}" class="btn-chef-panel"><i class="fas fa-columns"></i> Chef Panel</a></li>
+                    {% endif %}
+                    <li><a href="{{ path('app_logout') }}"><i class="fas fa-sign-out-alt"></i> Logout ({{ app.user.name }})</a></li>
+                {% else %}
+                    <li><a href="{{ path('app_login') }}"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                    <li><a href="{{ path('app_register') }}"><i class="fas fa-user-plus"></i> Register</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </header>
+
+    {% for label, messages in app.flashes %}
+        <div class="flash-messages">
+            {% for message in messages %}
+                <div class="flash-alert flash-alert-{{ label }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+
+    <div class="page-banner">
+        <h1>Discover Culinary Magic</h1>
+        <p>Explore chef-crafted recipes, adjust portions in real-time, and read feedback from food enthusiasts around the world.</p>
+    </div>
+
+    <main class="recipes-section">
+        <div class="recipes-grid">
+            {% for item in recipes %}
+                {% set recipe = item.recipe %}
+                {% set viewCount = item.viewCount %}
+                
+                {# Calculate average rating #}
+                {% set totalRating = 0 %}
+                {% set reviewsLength = recipe.reviews|length %}
+                {% if reviewsLength > 0 %}
+                    {% for r in recipe.reviews %}
+                        {% set totalRating = totalRating + r.rating %}
+                    {% endfor %}
+                    {% set avgRating = (totalRating / reviewsLength) %}
+                {% else %}
+                    {% set avgRating = 0 %}
+                {% endif %}
+
+                <div class="recipe-card">
+                    <div class="card-image-wrapper">
+                        {% if recipe.image %}
+                            <img src="{{ asset('uploads/recipes/' ~ recipe.image) }}" alt="{{ recipe.title }}" loading="lazy">
+                        {% else %}
+                            <div class="no-image-placeholder">
+                                <i class="fas fa-utensils fa-2x" style="margin-bottom: 8px;"></i>
+                                <span style="font-size: 0.8rem; font-weight: 500;">No photo available</span>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="cuisine-badge">
+                            {{ recipe.region ? recipe.region.name : 'Global' }}
+                        </div>
+                        
+                        <div class="views-badge">
+                            <i class="fas fa-eye" style="color: var(--primary);"></i>
+                            {{ viewCount }}
+                        </div>
+                    </div>
+
+                    <div class="card-content">
+                        <h2 class="recipe-title">{{ recipe.title }}</h2>
+                        
+                        <div class="recipe-meta">
+                            <div>
+                                <i class="fas fa-user-circle" style="margin-right: 5px;"></i>
+                                <span>Chef {{ recipe.chef.name }}</span>
+                            </div>
+                            
+                            <div class="rating-stars">
+                                {% if reviewsLength > 0 %}
+                                    <i class="fas fa-star"></i>
+                                    <span class="rating-text">{{ avgRating|number_format(1) }}</span>
+                                    <span style="color: var(--text-muted); font-size: 0.75rem; margin-left: 2px;">({{ reviewsLength }})</span>
+                                {% else %}
+                                    <i class="far fa-star"></i>
+                                    <span style="color: var(--text-muted); font-size: 0.75rem;">No reviews</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <a href="{{ path('app_home_show', {'id': recipe.id}) }}" class="btn-view-recipe">
+                            <span>View Details</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            {% else %}
+                <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; background: var(--glass-bg); border-radius: 24px; border: 1px dashed var(--border);">
+                    <i class="fas fa-egg fa-3x" style="color: var(--text-muted); margin-bottom: 20px;"></i>
+                    <h3 style="margin: 0 0 10px 0;">No Recipes Found</h3>
+                    <p style="color: var(--text-muted); margin: 0;">Be the first chef to publish a recipe!</p>
+                </div>
+            {% endfor %}
+        </div>
+    </main>
+{% endblock %}
