@@ -6,45 +6,76 @@
     {{ parent() }}
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('css/auth.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/auth.css?v=' ~ random()) }}">
 {% endblock %}
 
 {% block body %}
-<div class="auth-container">
-    <div class="auth-form-section">
-        <div class="brand">
-            <i class="fas fa-bowl-food"></i> Food Recipe
-        </div>
-        
-        <form method="post">
-            {% if error %}
-                <div class="alert">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-            {% endif %}
-
-            <input type="email" value="{{ last_username }}" name="_username" id="username" class="pill-input" placeholder="Username or Email" autocomplete="email" required autofocus>
-            
-            <input type="password" name="_password" id="password" class="pill-input" placeholder="Password" autocomplete="current-password" required>
-
-            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-
-            <div class="checkbox-group">
-                <input type="checkbox" name="_remember_me" id="_remember_me">
-                <label for="_remember_me">Remember me</label>
+<div class="auth-wrapper">
+    <div class="auth-split-container">
+        <!-- Left Side Image -->
+        <div class="auth-image-panel" style="background-image: url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80');">
+            <div class="auth-image-overlay">
+                <div class="quote-container">
+                    <h2>"Cooking is like love. It should be entered into with abandon or not at all."</h2>
+                    <p>- Harriet Van Horne</p>
+                </div>
             </div>
-
-            <button class="pill-btn" type="submit">LOGIN</button>
-        </form>
-
-        <div class="auth-links">
-            <p>Don't have an account? <a href="{{ path('app_register') }}">Register here</a></p>
-            <p><a href="{{ path('app_home') }}">Back to Home</a></p>
         </div>
 
-        <div class="footer-text">
-            &copy; 2026 Food Recipe LLC.
+        <!-- Right Side Form -->
+        <div class="auth-form-panel">
+            <div class="form-content-wrapper">
+                <div class="brand">
+                    <i class="fas fa-bowl-food"></i> Food Recipe
+                </div>
+                
+                <h1 class="auth-title">Welcome Back</h1>
+                <p class="auth-subtitle">Please sign in to continue your culinary journey.</p>
+
+                <form method="post" class="modern-form">
+                    {% if error %}
+                        <div class="alert alert-error">
+                            <i class="fas fa-exclamation-circle"></i>
+                            {{ error.messageKey|trans(error.messageData, 'security') }}
+                        </div>
+                    {% endif %}
+
+                    <div class="input-group">
+                        <label for="username">Email Address</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" value="{{ last_username }}" name="_username" id="username" class="modern-input" placeholder="Enter your email" autocomplete="email" required autofocus>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="password">Password</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" name="_password" id="password" class="modern-input" placeholder="Enter your password" autocomplete="current-password" required>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                    <div class="form-actions">
+                        <label class="modern-checkbox">
+                            <input type="checkbox" name="_remember_me" id="_remember_me">
+                            <span class="checkmark"></span>
+                            Remember me
+                        </label>
+                        <a href="#" class="forgot-password">Forgot Password?</a>
+                    </div>
+
+                    <button class="modern-btn" type="submit">Sign In <i class="fas fa-arrow-right"></i></button>
+                </form>
+
+                <div class="auth-footer">
+                    <p>New to Food Recipe? <a href="{{ path('app_register') }}">Create an account</a></p>
+                    <p><a href="{{ path('app_home') }}" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a></p>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="auth-image-section">
     </div>
 </div>
 {% endblock %}

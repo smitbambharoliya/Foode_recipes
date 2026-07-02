@@ -17,9 +17,16 @@ use Symfony\Component\Validator\Constraints\LessThanOrEqual;
 use Symfony\Component\Validator\Constraints\Type;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use App\Form\DataTransformer\RegionToTextTransformer;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class RecipeType extends AbstractType
 {
+    public function __construct(
+        private RegionToTextTransformer $transformer,
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -43,7 +50,7 @@ class RecipeType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('base_servings', null, [
+            ->add('baseServings', null, [
                 'constraints' => [
                     new NotBlank(['message' => 'Please specify the number of servings']),
                     new Type(['type' => 'integer', 'message' => 'The value {{ value }} is not a valid integer.']),
@@ -62,8 +69,7 @@ class RecipeType extends AbstractType
                 'by_reference' => false,
                 'label' => false,
             ])
-            ->add('region_name', TextType::class, [
-                'mapped' => false,
+            ->add('region', TextType::class, [
                 'label' => 'Region / Cuisine',
                 'attr' => [
                     'class' => 'pill-input',
@@ -73,6 +79,21 @@ class RecipeType extends AbstractType
                 ],
                 'constraints' => [
                     new NotBlank(['message' => 'Please provide a region or cuisine']),
+                ],
+            ])
+            ->add('meal_type', ChoiceType::class, [
+                'label' => 'Meal Type',
+                'choices'  => [
+                    'Breakfast' => 'Breakfast',
+                    'Lunch' => 'Lunch',
+                    'Dinner' => 'Dinner',
+                    'Snack' => 'Snack',
+                    'Dessert' => 'Dessert',
+                    'Beverage' => 'Beverage',
+                ],
+                'attr' => ['class' => 'pill-input'],
+                'constraints' => [
+                    new NotBlank(['message' => 'Please select a meal type']),
                 ],
             ])
             ->add('image', FileType::class, [
@@ -92,6 +113,9 @@ class RecipeType extends AbstractType
                 ],
             ])
         ;
+
+        $builder->get('region')
+            ->addModelTransformer($this->transformer);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

@@ -20,13 +20,14 @@ class IngredientType extends AbstractType
                 'attr' => ['class' => 'pill-input', 'placeholder' => 'Name (e.g. Sugar)'],
                 'constraints' => [new NotBlank()]
             ])
-            ->add('base_quantity', IntegerType::class, [
+            ->add('baseQuantity', IntegerType::class, [
                 'attr' => ['class' => 'pill-input', 'placeholder' => 'Qty (e.g. 500)'],
-                'constraints' => [new NotBlank(), new Positive()]
+                'required' => false,
+                'constraints' => [new Positive()]
             ])
             ->add('unit', TextType::class, [
                 'attr' => ['class' => 'pill-input', 'placeholder' => 'Unit (e.g. g, ml)'],
-                'constraints' => [new NotBlank()]
+                'required' => false,
             ])
         ;
     }

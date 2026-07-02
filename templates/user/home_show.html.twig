@@ -19,8 +19,16 @@
             --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
             --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
             --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-            --glass-bg: rgba(255, 255, 255, 0.85);
-            --glass-border: rgba(255, 255, 255, 0.5);
+            --glass-bg: rgba(255, 255, 255, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.25);
+            --glass-blur: blur(16px);
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
         }
 
         body {
@@ -461,6 +469,11 @@
         .star-rating-selector input:checked ~ label {
             color: #ffb703;
         }
+        
+        .star-rating-selector label:hover {
+            transform: scale(1.2);
+            transition: transform 0.15s ease;
+        }
 
         /* Buttons */
         .btn-submit {
@@ -523,7 +536,7 @@
                 <li><a href="{{ path('app_home') }}">Home</a></li>
                 {% if app.user %}
                     {% if is_granted('ROLE_CHEF') %}
-                        <li><a href="{{ path('app_chef_deshbord') }}">Chef Panel</a></li>
+                        <li><a href="{{ path('app_chef_dashboard') }}">Chef Panel</a></li>
                     {% endif %}
                     <li><a href="{{ path('app_logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                 {% else %}
@@ -629,13 +642,13 @@
             </div>
 
             {% for label, messages in app.flashes %}
-                <div class="flash-messages">
-                    {% for message in messages %}
-                        <div class="flash-alert flash-alert-{{ label }}">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                </div>
+            <div class="flash-messages">
+                {% for message in messages %}
+                    <div class="flash-alert flash-alert-{{ label }}">
+                        {{ message|trans }}
+                    </div>
+                {% endfor %}
+            </div>
             {% endfor %}
 
             <div class="reviews-grid">
@@ -731,47 +744,32 @@
         const baseServings = parseFloat(servingsInput.dataset.baseServings);
         const ingredientRows = document.querySelectorAll('.ingredient-row');
 
-        function scaleIngredients(targetServings) {
+        function calculateScale(targetServings) {
             if (isNaN(targetServings) || targetServings < 1) return;
-            
-            fetch(`/api/recipe/{{ recipe.id }}/scale?servings=${targetServings}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.ingredients) {
-                        const ingredientList = document.querySelector('.ingredients-list');
-                        ingredientList.innerHTML = '';
-                        data.ingredients.forEach(ingredient => {
-                            const li = document.createElement('li');
-                            li.className = 'ingredient-row';
-                            li.dataset.baseQty = ingredient.amount;
-                            li.innerHTML = `
-                                <span class="ingredient-name">${ingredient.name}</span>
-                                <span class="ingredient-qty-container">
-                                    <span class="ingredient-qty-val">${ingredient.amount}</span>
-                                    <span class="ingredient-unit">${ingredient.unit || ''}</span>
-                                </span>
-                            `;
-                            ingredientList.appendChild(li);
-                        });
-                    }
-                })
-                .catch(err => console.error('Error scaling ingredients:', err));
+
+            ingredientRows.forEach(row => {
+                const baseQty = parseFloat(row.dataset.baseQty);
+                const qtyValueSpan = row.querySelector('.ingredient-qty-val');
+                
+                // Perform the scaling equation locally
+                let calculatedAmount = (baseQty * targetServings) / baseServings;
+                
+                // Round to 1 decimal place cleanly
+                qtyValueSpan.textContent = Number(calculatedAmount.toFixed(1));
+            });
         }
 
         servingsInput.addEventListener('input', function() {
-            let value = parseInt(servingsInput.value);
-            if (value < 1) {
-                value = 1;
-                servingsInput.value = 1;
-            }
-            scaleIngredients(value);
+            let value = parseInt(this.value);
+            if (value < 1) { this.value = 1; value = 1; }
+            calculateScale(value);
         });
 
         btnMinus.addEventListener('click', function() {
             let currentValue = parseInt(servingsInput.value);
             if (currentValue > 1) {
                 servingsInput.value = currentValue - 1;
-                scaleIngredients(currentValue - 1);
+                calculateScale(currentValue - 1);
             }
         });
 
@@ -779,12 +777,9 @@
             let currentValue = parseInt(servingsInput.value);
             if (currentValue < 100) {
                 servingsInput.value = currentValue + 1;
-                scaleIngredients(currentValue + 1);
+                calculateScale(currentValue + 1);
             }
         });
-        
-        // Initial scaling in case default is different
-        scaleIngredients(parseInt(servingsInput.value));
     });
     </script>
 {% endblock %}

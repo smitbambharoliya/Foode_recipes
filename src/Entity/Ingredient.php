@@ -16,10 +16,10 @@ class Ingredient
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column]
-    private ?int $base_quantity = null;
+    #[ORM\Column(nullable: true)]
+    private ?int $baseQuantity = null;
 
-    #[ORM\Column(length: 50)]
+    #[ORM\Column(length: 50, nullable: true)]
     private ?string $unit = null;
 
     #[ORM\ManyToOne(inversedBy: 'ingredients')]
@@ -44,12 +44,12 @@ class Ingredient
 
     public function getBaseQuantity(): ?int
     {
-        return $this->base_quantity;
+        return $this->baseQuantity;
     }
 
-    public function setBaseQuantity(int $base_quantity): static
+    public function setBaseQuantity(int $baseQuantity): static
     {
-        $this->base_quantity = $base_quantity;
+        $this->baseQuantity = $baseQuantity;
 
         return $this;
     }

@@ -61,7 +61,7 @@
 
     <div class="food-header">
         <h2 class="section-title" style="margin: 0;">Popular & Recent</h2>
-        <a href="{{ path('app_chef_recipie') }}" style="color: #ff5722; text-decoration: none; font-weight: 600; font-size: 0.95rem;">View All</a>
+        <a href="{{ path('app_chef_recipe') }}" style="color: #ff5722; text-decoration: none; font-weight: 600; font-size: 0.95rem;">View All</a>
     </div>
 
     {% if recentRecipes|length > 0 %}
@@ -83,7 +83,7 @@
                     
                     <div class="price-row">
                         <div class="servings"><span>SVGS</span> {{ recipe.baseServings }}</div>
-                        <a href="{{ path('app_chef_recipie_show', {'id': recipe.id}) }}" class="btn-add">View</a>
+                        <a href="{{ path('app_chef_recipe_show', {'id': recipe.id}) }}" class="btn-add">View</a>
                     </div>
                 </div>
             {% endfor %}
@@ -92,7 +92,7 @@
         <div style="text-align: center; padding: 60px 20px; background: #fff; border-radius: 20px; border: 1px dashed #ddd;">
             <i class="fas fa-hamburger fa-3x" style="color: #ddd; margin-bottom: 15px;"></i>
             <h3 style="margin: 0 0 10px 0; color: #555;">No recipes yet</h3>
-            <a href="{{ path('app_chef_recipie_new') }}" class="btn-primary" style="margin-top: 10px;">Add Recipe</a>
+            <a href="{{ path('app_chef_recipe_new') }}" class="btn-primary" style="margin-top: 10px;">Add Recipe</a>
         </div>
     {% endif %}
 {% endblock %}

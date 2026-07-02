@@ -34,10 +34,10 @@ class RegistrationController extends AbstractController
             $security->login($user, 'form_login', 'main');
             
             if (in_array('ROLE_CHEF', $user->getRoles(), true)) {
-                return $this->redirectToRoute('app_chef_deshbord');
+                return $this->redirectToRoute('app_chef_dashboard');
             }
 
-            return $this->redirectToRoute('app_user');
+            return $this->redirectToRoute('app_home');
         }
 
         return $this->render('registration/register.html.twig', [

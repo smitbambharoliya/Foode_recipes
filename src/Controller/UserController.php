@@ -7,6 +7,8 @@ use App\Entity\Review;
 use App\Form\CommentType;
 use App\Repository\RecipeRepository;
 use App\Repository\RecipeViewRepository;
+use App\Repository\RegionRepository;
+use App\Service\RecipeDateTimeHelper;
 use App\Service\RecipeScaler;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,12 +21,34 @@ use Symfony\Component\Routing\Attribute\Route;
 final class UserController extends AbstractController
 {
     #[Route('/home',name:"app_home")]
-    public function index(RecipeRepository $recipeRepository): Response
+    public function index(RecipeRepository $recipeRepository, 
+    RegionRepository $regionRepository, 
+    RecipeDateTimeHelper $recipeDateTimeHelper,  
+    Request $request): Response
     {
-        $recipesWithViews = $recipeRepository->findAllWithViewCount();
+        $currentMealType = $recipeDateTimeHelper->getCurrentMealType();
+        $displayTitle = $recipeDateTimeHelper->getDisplayTitle($currentMealType);
+
+        $trendingRecipes = $recipeRepository->findTrendingByTime($currentMealType);
+        $recommendedRecipes = $recipeRepository->findRecommendationsByTime($currentMealType);
+        $newlyAdded = $recipeRepository->findNewlyAdded();
+
+        $searchTerm = $request->query->get('search');
+        $regionId = $request->query->get('region') ? (int) $request->query->get('region') : null;
+
+        $recipesWithViews = $recipeRepository->searchGlobal($searchTerm, $regionId);
+        $regions = $regionRepository->findAll();
+
 
         return $this->render('user/home.html.twig', [
             'recipes'=>$recipesWithViews,
+            'regions'=>$regions,
+            'selectedRegionId'=>$regionId,
+            'searchTerm'=>$searchTerm,
+            'displayTitle' => $displayTitle,
+            'trendingRecipes' => $trendingRecipes,
+            'recommendedRecipes' => $recommendedRecipes,
+            'newlyAdded' => $newlyAdded,
         ]);
     }
 
@@ -33,7 +57,6 @@ final class UserController extends AbstractController
     RecipeRepository $recipeRepository,
     RecipeViewRepository $recipeViewRepository,
     EntityManagerInterface $entityManager,
-    RecipeScaler $recipeScaler,
     int $id): Response
     {
         $recipe=$recipeRepository->find($id);
@@ -63,7 +86,7 @@ final class UserController extends AbstractController
 
         if($form->isSubmitted() && $form->isValid()){
             if(!$user) {
-                $this->addFlash('error','You must be login to giv comment!');
+                $this->addFlash('error','recipe.flash.login_required');
                 return $this->redirectToRoute('app_login');
             }
 
@@ -73,7 +96,7 @@ final class UserController extends AbstractController
             $entityManager->persist($review);
             $entityManager->flush();
 
-            $this->addFlash('success','Your comment has been added successfully!');
+            $this->addFlash('success','recipe.flash.comment_added');
             return $this->redirectToRoute('app_home_show',['id'=>$id]);
         }
         return $this->render('user/home_show.html.twig',[
@@ -95,7 +118,12 @@ final class UserController extends AbstractController
             return $this->json(['error' => 'Invalid servings'], Response::HTTP_BAD_REQUEST);
         }
 
-        $scaledIngredients = $recipeScaler->scaleIngredients($recipe, $servings, $recipe->getBaseServings());
+        $baseServings = $recipe->getBaseServings();
+        if ($baseServings < 1) {
+            return $this->json(['error' => 'Recipe has invalid base servings configuration'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        $scaledIngredients = $recipeScaler->scaleIngredients($recipe, $servings, $baseServings);
 
         return $this->json([
             'servings' => $servings,

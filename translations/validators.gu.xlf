@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en" target-language="gu" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="vsM4tSv" resname="There is already an account with this email">
+        <source>There is already an account with this email</source>
+        <target>__There is already an account with this email</target>
+      </trans-unit>
+      <trans-unit id="utZAkGx" resname="Please select a rating.">
+        <source>Please select a rating.</source>
+        <target>__Please select a rating.</target>
+      </trans-unit>
+      <trans-unit id="smvvvaO" resname="Rating must be between 1 and 5.">
+        <source>Rating must be between 1 and 5.</source>
+        <target>__Rating must be between 1 and 5.</target>
+      </trans-unit>
+      <trans-unit id="dIxwDRx" resname="Please enter your comment.">
+        <source>Please enter your comment.</source>
+        <target>__Please enter your comment.</target>
+      </trans-unit>
+      <trans-unit id="Uw07x82" resname="Your comment must be at least {{ limit }} characters long.">
+        <source>Your comment must be at least {{ limit }} characters long.</source>
+        <target>__Your comment must be at least {{ limit }} characters long.</target>
+      </trans-unit>
+      <trans-unit id="KGXx.rd" resname="Please enter a recipe title">
+        <source>Please enter a recipe title</source>
+        <target>__Please enter a recipe title</target>
+      </trans-unit>
+      <trans-unit id="BquD1PN" resname="Your title should be at least {{ limit }} characters">
+        <source>Your title should be at least {{ limit }} characters</source>
+        <target>__Your title should be at least {{ limit }} characters</target>
+      </trans-unit>
+      <trans-unit id="3uGxPwt" resname="Please provide cooking instructions">
+        <source>Please provide cooking instructions</source>
+        <target>__Please provide cooking instructions</target>
+      </trans-unit>
+      <trans-unit id="NHHUf62" resname="Instructions should be at least {{ limit }} characters long">
+        <source>Instructions should be at least {{ limit }} characters long</source>
+        <target>__Instructions should be at least {{ limit }} characters long</target>
+      </trans-unit>
+      <trans-unit id="1SiVNwE" resname="Please specify the number of servings">
+        <source>Please specify the number of servings</source>
+        <target>__Please specify the number of servings</target>
+      </trans-unit>
+      <trans-unit id="NYOrfPb" resname="The value {{ value }} is not a valid integer.">
+        <source>The value {{ value }} is not a valid integer.</source>
+        <target>__The value {{ value }} is not a valid integer.</target>
+      </trans-unit>
+      <trans-unit id="hdXklMY" resname="Servings cannot exceed {{ limit }}">
+        <source>Servings cannot exceed {{ limit }}</source>
+        <target>__Servings cannot exceed {{ limit }}</target>
+      </trans-unit>
+      <trans-unit id="AVMD_XM" resname="Please provide a region or cuisine">
+        <source>Please provide a region or cuisine</source>
+        <target>__Please provide a region or cuisine</target>
+      </trans-unit>
+      <trans-unit id="4_AG3kR" resname="Please upload a valid image document">
+        <source>Please upload a valid image document</source>
+        <target>__Please upload a valid image document</target>
+      </trans-unit>
+      <trans-unit id="6h2NNfX" resname="You should agree to our terms.">
+        <source>You should agree to our terms.</source>
+        <target>__You should agree to our terms.</target>
+      </trans-unit>
+      <trans-unit id="B7yoMOR" resname="Please enter a password">
+        <source>Please enter a password</source>
+        <target>__Please enter a password</target>
+      </trans-unit>
+      <trans-unit id="_OmnKuR" resname="Your password should be at least {{ limit }} characters">
+        <source>Your password should be at least {{ limit }} characters</source>
+        <target>__Your password should be at least {{ limit }} characters</target>
+      </trans-unit>
+      <trans-unit id="B9r0Hn5" resname="Error">
+        <source>Error</source>
+        <target>__Error</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

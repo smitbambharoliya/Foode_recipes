@@ -1,0 +1,6 @@
+recipe:
+  flash:
+    updated: "Recipe has been updated successfully!"
+    deleted: "Recipe has been deleted successfully!"
+    login_required: "You must be logged in to give a comment!"
+    comment_added: "Your comment has been added successfully!"

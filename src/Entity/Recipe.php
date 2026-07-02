@@ -22,8 +22,8 @@ class Recipe
     #[ORM\Column(type: Types::TEXT)]
     private ?string $instructions = null;
 
-    #[ORM\Column]
-    private ?int $base_servings = null;
+    #[ORM\Column(type: Types::INTEGER, options: ['unsigned' => true, 'default' => 1])]
+    private ?int $baseServings = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
@@ -38,7 +38,7 @@ class Recipe
     #[ORM\OneToMany(targetEntity: Ingredient::class, mappedBy: 'recipe', cascade: ['persist', 'remove'])]
     private Collection $ingredients;
 
-    #[ORM\ManyToOne(inversedBy: 'recipes')]
+    #[ORM\ManyToOne(inversedBy: 'recipes', cascade: ['persist'])]
     private ?Region $region = null;
 
     /**
@@ -54,6 +54,12 @@ class Recipe
      */
     #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'recipe', cascade:['persist', 'remove'])]
     private Collection $reviews;
+
+    #[ORM\Column(length: 255)]
+    private ?string $meal_type = null;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable:true)]
+    private ?\DateTimeImmutable $createdAt = null;
 
 
 
@@ -96,12 +102,12 @@ class Recipe
 
     public function getBaseServings(): ?int
     {
-        return $this->base_servings;
+        return $this->baseServings;
     }
 
-    public function setBaseServings(int $base_servings): static
+    public function setBaseServings(int $baseServings): static
     {
-        $this->base_servings = $base_servings;
+        $this->baseServings = $baseServings;
 
         return $this;
     }
@@ -231,6 +237,30 @@ class Recipe
                 $review->setRecipe(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getMealType(): ?string
+    {
+        return $this->meal_type;
+    }
+
+    public function setMealType(string $meal_type): static
+    {
+        $this->meal_type = $meal_type;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }

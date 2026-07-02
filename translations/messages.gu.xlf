@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en" target-language="gu" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="aw_VcDH" resname="recipe.flash.updated">
+        <source>recipe.flash.updated</source>
+        <target>રેસીપી સફળતાપૂર્વક અપડેટ થઈ ગઈ છે!</target>
+      </trans-unit>
+      <trans-unit id="VbvCjGd" resname="recipe.flash.deleted">
+        <source>recipe.flash.deleted</source>
+        <target>રેસીપી સફળતાપૂર્વક ડિલીટ કરી દેવામાં આવી છે.</target>
+      </trans-unit>
+      <trans-unit id="Q_DXZRx" resname="recipe.flash.login_required">
+        <source>recipe.flash.login_required</source>
+        <target>કોમેન્ટ કરવા માટે તમારે લોગીન કરવું પડશે, ભાઈ!</target>
+      </trans-unit>
+      <trans-unit id="Fsl9tX0" resname="recipe.flash.comment_added">
+        <source>recipe.flash.comment_added</source>
+        <target>તમારી કોમેન્ટ સફળતાપૂર્વક ઉમેરાઈ ગઈ છે!</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

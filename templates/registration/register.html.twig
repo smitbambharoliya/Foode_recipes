@@ -6,70 +6,128 @@
     {{ parent() }}
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('css/auth.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/auth.css?v=' ~ random()) }}">
 {% endblock %}
 
 {% block body %}
-<div class="auth-container">
-    <div class="auth-form-section" style="padding-top: 30px; padding-bottom: 30px; overflow-y: auto;">
-        <div class="brand" style="margin-bottom: 20px;">
-            <i class="fas fa-bowl-food"></i> Food Recipe
+<div class="auth-wrapper">
+    <div class="auth-split-container register-split">
+        <!-- Left Side Image -->
+        <div class="auth-image-panel" style="background-image: url('https://images.unsplash.com/photo-1495521821757-a1efb6729352?ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80');">
+            <div class="auth-image-overlay">
+                <div class="quote-container">
+                    <h2>"People who love to eat are always the best people."</h2>
+                    <p>- Julia Child</p>
+                </div>
+            </div>
         </div>
-        
-        {{ form_errors(registrationForm) }}
 
-        {{ form_start(registrationForm, {'attr': {'novalidate': 'novalidate'}}) }}
-            
-            <div class="form-row">
-                <div class="form-group">
-                    {{ form_widget(registrationForm.name, {'attr': {'class': 'pill-input', 'placeholder': 'Full Name'}}) }}
+        <!-- Right Side Form -->
+        <div class="auth-form-panel scrollable-panel">
+            <div class="form-content-wrapper">
+                <div class="brand">
+                    <i class="fas fa-bowl-food"></i> Food Recipe
                 </div>
-                <div class="form-group">
-                    {{ form_widget(registrationForm.email, {'attr': {'class': 'pill-input', 'placeholder': 'Email Address'}}) }}
+                
+                <h1 class="auth-title">Join Us</h1>
+                <p class="auth-subtitle">Create an account to start sharing your amazing recipes.</p>
+
+                {{ form_errors(registrationForm) }}
+
+                {{ form_start(registrationForm, {'attr': {'class': 'modern-form', 'novalidate': 'novalidate'}}) }}
+                    
+                    <div class="form-row-multi">
+                        <div class="input-group">
+                            <label>Full Name</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fas fa-user"></i>
+                                {{ form_widget(registrationForm.name, {'attr': {'class': 'modern-input', 'placeholder': 'Enter your full name'}}) }}
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>Email Address</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fas fa-envelope"></i>
+                                {{ form_widget(registrationForm.email, {'attr': {'class': 'modern-input', 'placeholder': 'Enter your email'}}) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row-multi">
+                        <div class="input-group">
+                            <label>Password</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fas fa-lock"></i>
+                                {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'modern-input', 'placeholder': 'Create a password'}}) }}
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>Phone Number</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fas fa-phone"></i>
+                                {{ form_widget(registrationForm.phone, {'attr': {'class': 'modern-input', 'placeholder': 'Enter phone number'}}) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row-multi">
+                        <div class="input-group">
+                            <label>Gender</label>
+                            <div class="modern-gender-selection">
+                                {{ form_widget(registrationForm.gender) }}
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>Age</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fas fa-calendar-alt"></i>
+                                {{ form_widget(registrationForm.age, {'attr': {'class': 'modern-input', 'placeholder': 'Your age'}}) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row-multi">
+                        <div class="input-group">
+                            <label>City</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fas fa-city"></i>
+                                {{ form_widget(registrationForm.city, {'attr': {'class': 'modern-input', 'placeholder': 'Your city'}}) }}
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>State</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fas fa-map"></i>
+                                {{ form_widget(registrationForm.state, {'attr': {'class': 'modern-input', 'placeholder': 'Select state'}}) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Country</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fas fa-globe"></i>
+                            {{ form_widget(registrationForm.country, {'attr': {'class': 'modern-input', 'placeholder': 'Select country'}}) }}
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <label class="modern-checkbox terms-checkbox">
+                            {{ form_widget(registrationForm.agreeTerms) }}
+                            <span class="checkmark"></span>
+                            I agree to the terms and conditions
+                        </label>
+                    </div>
+
+                    <button class="modern-btn" type="submit">Create Account <i class="fas fa-user-plus"></i></button>
+                {{ form_end(registrationForm) }}
+
+                <div class="auth-footer">
+                    <p>Already have an account? <a href="{{ path('app_login') }}">Sign in here</a></p>
+                    <p><a href="{{ path('app_home') }}" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a></p>
                 </div>
             </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'pill-input', 'placeholder': 'Password'}}) }}
-                </div>
-                <div class="form-group">
-                    {{ form_widget(registrationForm.phone, {'attr': {'class': 'pill-input', 'placeholder': 'Phone Number'}}) }}
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    {{ form_widget(registrationForm.gender, {'attr': {'class': 'pill-input'}}) }}
-                </div>
-                <div class="form-group">
-                    {{ form_widget(registrationForm.age, {'attr': {'class': 'pill-input', 'placeholder': 'Age'}}) }}
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    {{ form_widget(registrationForm.city, {'attr': {'class': 'pill-input', 'placeholder': 'City'}}) }}
-                </div>
-                <div class="form-group">
-                    {{ form_widget(registrationForm.state, {'attr': {'class': 'pill-input', 'placeholder': 'State'}}) }}
-                </div>
-            </div>
-
-            <div class="checkbox-group" style="margin-top: 15px; margin-bottom: 20px; display: flex; align-items: center; justify-content: center;">
-                {{ form_widget(registrationForm.agreeTerms) }}
-                {{ form_label(registrationForm.agreeTerms, 'I agree to the terms and conditions') }}
-            </div>
-
-            <button type="submit" class="pill-btn" style="width: 100%; font-size: 1.1rem; padding: 18px;">REGISTER</button>
-        {{ form_end(registrationForm) }}
-
-        <div class="auth-links" style="margin-top: 25px; text-align: center;">
-            <p style="margin-bottom: 10px;">Already have an account? <a href="{{ path('app_login') }}">Login here</a></p>
-            <p><a href="{{ path('app_home') }}">Back to Home</a></p>
         </div>
-    </div>
-    <div class="auth-image-section">
     </div>
 </div>
 {% endblock %}

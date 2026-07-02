@@ -46,8 +46,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $gender = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $age = null;
+    #[ORM\Column]
+    private ?int $age = null;
 
     #[ORM\Column(length: 255)]
     private ?string $city = null;
@@ -74,6 +74,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'user')]
     private Collection $reviews;
+
+    #[ORM\Column(length: 255)]
+    private ?string $country = null;
 
     public function __construct()
     {
@@ -200,12 +203,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getAge(): ?string
+    public function getAge(): ?int
     {
         return $this->age;
     }
 
-    public function setAge(string $age): static
+    public function setAge(int $age): static
     {
         $this->age = $age;
 
@@ -324,6 +327,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $review->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCountry(): ?string
+    {
+        return $this->country;
+    }
+
+    public function setCountry(string $country): static
+    {
+        $this->country = $country;
 
         return $this;
     }
