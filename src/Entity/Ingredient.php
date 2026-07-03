@@ -47,7 +47,7 @@ class Ingredient
         return $this->baseQuantity;
     }
 
-    public function setBaseQuantity(int $baseQuantity): static
+    public function setBaseQuantity(?int $baseQuantity): static
     {
         $this->baseQuantity = $baseQuantity;
 
@@ -59,7 +59,7 @@ class Ingredient
         return $this->unit;
     }
 
-    public function setUnit(string $unit): static
+    public function setUnit(?string $unit): static
     {
         $this->unit = $unit;
 
