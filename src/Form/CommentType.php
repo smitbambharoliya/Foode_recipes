@@ -10,7 +10,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Range;
@@ -21,7 +21,7 @@ class CommentType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('rating', IntegerType::class, [
+            ->add('rating', NumberType::class, [
                 'constraints' => [
                     new NotBlank(['message' => 'Please select a rating.']),
                     new Range([
@@ -33,8 +33,10 @@ class CommentType extends AbstractType
                 'attr' => [
                     'min' => 1,
                     'max' => 5,
+                    'step' => '0.1',
                     'class' => 'pill-input',
                 ],
+                'html5' => true,
             ])
             ->add('content', TextareaType::class, [
                 'constraints' => [

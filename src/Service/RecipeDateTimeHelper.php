@@ -4,12 +4,13 @@
 
 namespace App\Service;
 
-
-
-
+use App\Entity\User;
+use App\Repository\RecipeViewRepository;
 
 class RecipeDateTimeHelper
 {
+    public function __construct(private RecipeViewRepository $RecipeViewRepository) {}
+    
     public function getCurrentMealType():string
     {
         $hour = (int) (new \DateTime())->format('G');
@@ -43,5 +44,13 @@ class RecipeDateTimeHelper
         'Dinner' => 'Evening Delights',
         default => 'Late night cravings',
        };
+    }
+
+    public function getUserHistory(?User $user): ?array
+    {
+        if(!$user){
+            return null;
+        }
+        return $this->RecipeViewRepository->findUserHistory($user);
     }
 }

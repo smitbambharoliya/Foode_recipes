@@ -877,6 +877,40 @@
             {% else %}
                 {# Premium Structured Homepage #}
                 
+                {# Continue Reading (User History) #}
+                {% if app.user and continueReading is not empty %}
+                    <section class="explore-section" style="margin-bottom: 50px;">
+                        <h2 class="section-title"><i class="fas fa-history"></i> Continue Cooking</h2>
+                        <div class="recipes-grid">
+                            {% for item in continueReading %}
+                                {% set recipe = item[0].recipe %}
+                                <div class="recipe-card">
+                                    <div class="card-image-wrapper">
+                                        {% if recipe.image %}
+                                            <img src="{{ asset('uploads/recipes/' ~ recipe.image) }}" alt="{{ recipe.title }}" loading="lazy">
+                                        {% else %}
+                                            <div class="no-image-placeholder">
+                                                <i class="fas fa-utensils fa-2x" style="margin-bottom: 8px;"></i>
+                                                <span style="font-size: 0.8rem; font-weight: 500;">No photo available</span>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="card-content">
+                                        <h2 class="recipe-title">{{ recipe.title }}</h2>
+                                        <span style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px; display: block; padding-bottom: 15px; border-bottom: 1px solid #f1f5f9;">
+                                            <i class="fas fa-clock"></i> Last viewed: {{ item.lastViewed|date('M d, h:i A') }}
+                                        </span>
+                                        <a href="{{ path('app_home_show', {'id': recipe.id}) }}" class="btn-view-recipe">
+                                            <span>Continue Cooking</span>
+                                            <i class="fas fa-arrow-right"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </section>
+                {% endif %}
+
                 {# 1. Featured Recipe Banner (First Recipe) #}
                 {% set featuredItem = recipes[0] %}
                 {% set featuredRecipe = featuredItem.recipe %}
@@ -1004,7 +1038,7 @@
 
                     {# Right Column: Sidebar recommendations #}
                     <aside class="sidebar-section">
-                        <h3 class="sidebar-title"><i class="fas fa-thumbs-up"></i> {{ displayTitle }}</h3>
+                        <h3 class="sidebar-title"><i class="fas fa-thumbs-up"></i> Quick Suggestions</h3>
                         <div class="sidebar-list">
                             {% for recipe in recommendedRecipes %}
                                 
@@ -1029,8 +1063,8 @@
                 </div>
 
                 {# 3. Middle Grid: Newly Added #}
-                <section class="explore-section" style="margin-bottom: 50px;">
-                    <h2 class="section-title"><i class="fas fa-leaf"></i> Newly Added</h2>
+                <section class="explore-section" style="margin-top: 50px; margin-bottom: 50px;">
+                    <h2 class="section-title"><i class="fas fa-leaf"></i> Freshly Added Recipes</h2>
                     <div class="recipes-grid">
                         {% for recipe in newlyAdded %}
                             {% set totalRating = 0 %}
@@ -1054,8 +1088,19 @@
                                             <span style="font-size: 0.8rem; font-weight: 500;">No photo available</span>
                                         </div>
                                     {% endif %}
-                                    <div class="cuisine-badge">
-                                        {{ recipe.region ? recipe.region.name : 'Global' }}
+                                    <div class="cuisine-badge" style="background: var(--dark); color: #fff;">
+                                        {% if recipe.createdAt %}
+                                            {% set difference = date().diff(date(recipe.createdAt)) %}
+                                            {% if difference.days == 0 %}
+                                                Added Today
+                                            {% elseif difference.days == 1 %}
+                                                Added Yesterday
+                                            {% else %}
+                                                {{ difference.days }} Days Ago
+                                            {% endif %}
+                                        {% else %}
+                                            Recent
+                                        {% endif %}
                                     </div>
                                 </div>
 

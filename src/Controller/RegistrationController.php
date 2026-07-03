@@ -21,26 +21,31 @@ class RegistrationController extends AbstractController
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            /** @var string $plainPassword */
-            $plainPassword = $form->get('plainPassword')->getData();
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                /** @var string $plainPassword */
+                $plainPassword = $form->get('plainPassword')->getData();
 
-            // encode the plain password
-            $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+                // encode the plain password
+                $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
 
-            // Explicitly set ROLE_USER so it saves to the database
-            $user->setRoles(['ROLE_USER']);
+                // Explicitly set ROLE_USER so it saves to the database
+                $user->setRoles(['ROLE_USER']);
 
-            $entityManager->persist($user);
-            $entityManager->flush();
+                $entityManager->persist($user);
+                $entityManager->flush();
 
-            $security->login($user, 'form_login', 'main');
-            
-            if (in_array('ROLE_CHEF', $user->getRoles(), true)) {
-                return $this->redirectToRoute('app_chef_dashboard');
+                $this->addFlash('success', 'Registration successful! Welcome to Food Recipe.');
+                $security->login($user, 'form_login', 'main');
+                
+                if (in_array('ROLE_CHEF', $user->getRoles(), true)) {
+                    return $this->redirectToRoute('app_chef_dashboard');
+                }
+
+                return $this->redirectToRoute('app_home');
+            } else {
+                $this->addFlash('error', 'Please check the form for errors.');
             }
-
-            return $this->redirectToRoute('app_home');
         }
 
         return $this->render('registration/register.html.twig', [

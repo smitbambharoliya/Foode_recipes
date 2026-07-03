@@ -17,31 +17,6 @@ class RecipeViewRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, RecipeView::class);
     }
-
-    //    /**
-    //     * @return RecipeView[] Returns an array of RecipeView objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('r')
-    //            ->andWhere('r.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('r.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?RecipeView
-    //    {
-    //        return $this->createQueryBuilder('r')
-    //            ->andWhere('r.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
     public function hasUserViewedRecipe(User $user,Recipe $recipe): bool
     {
         $oneHourAgo = new \DateTimeImmutable('-1 hour');
@@ -58,5 +33,26 @@ class RecipeViewRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
 
         return $count > 0;
+    }
+   
+    public function findUserHistory(User $user): array
+    {
+    return $this->createQueryBuilder('v')
+        ->select('v', 'MAX(v.viewedAt) as lastViewed')
+ 
+        ->join('v.recipe', 'r')
+        
+      
+            ->andWhere('v.user = :user')
+            ->setParameter('user', $user)
+        
+        
+            ->groupBy('r.id')
+        
+
+            ->orderBy('lastViewed', 'DESC')
+            ->setMaxResults(4)
+            ->getQuery()
+            ->getResult();
     }
 }
