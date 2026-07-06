@@ -878,7 +878,7 @@
                 {# Premium Structured Homepage #}
                 
                 {# Continue Reading (User History) #}
-                {% if app.user and continueReading is not empty %}
+                {% if app.user and continueReading is defined and continueReading is not empty %}
                     <section class="explore-section" style="margin-bottom: 50px;">
                         <h2 class="section-title"><i class="fas fa-history"></i> Continue Cooking</h2>
                         <div class="recipes-grid">

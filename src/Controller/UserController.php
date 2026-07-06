@@ -2,13 +2,13 @@
 
 namespace App\Controller;
 
-use App\Entity\RecipeView;
+
 use App\Entity\Review;
 use App\Form\CommentType;
 use App\Repository\RecipeRepository;
-use App\Repository\RecipeViewRepository;
 use App\Repository\RegionRepository;
 use App\Service\RecipeDateTimeHelper;
+use App\Service\RecipeRecommendationHelper;
 use App\Service\RecipeScaler;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -55,54 +55,53 @@ final class UserController extends AbstractController
     #[Route('/home/{id}',name:'app_home_show')]
     public function show(Request $request,
     RecipeRepository $recipeRepository,
-    RecipeViewRepository $recipeViewRepository,
+    RecipeRecommendationHelper $recommendationHelper,
     EntityManagerInterface $entityManager,
     int $id): Response
     {
         $recipe=$recipeRepository->find($id);
-
+         
         if (!$recipe) {
             throw $this->createNotFoundException('No recipe found for id ' . $id);
         }
+       
         $user  = $this->getUser();
 
-        if($user){
-            $hasViewed = $recipeViewRepository->hasUserViewedRecipe($user,$recipe);
+        $recommendationHelper->logRecipeView($user, $recipe);
 
-            if(!$hasViewed){
-                $recipeView = new RecipeView();
-                $recipeView->setRecipe($recipe);
-                $recipeView->setUser($user);
-                $recipeView->setViewedAt(new \DateTime());
-
-                $entityManager->persist($recipeView);
-                $entityManager->flush();
-            }   
-        }
+        $recommendations = $recommendationHelper->getRecommendations($recipe);
+        
         $review = new Review();
         $form = $this->createForm(CommentType::class,$review);
         $form->handleRequest($request);
         
+        
+        if($form->isSubmitted()){
+            if($form->isValid()){
+                if(!$user) {
+                    $this->addFlash('error','recipe.flash.login_required');
+                    return $this->redirectToRoute('app_login');
+                }
 
-        if($form->isSubmitted() && $form->isValid()){
-            if(!$user) {
-                $this->addFlash('error','recipe.flash.login_required');
-                return $this->redirectToRoute('app_login');
+                $review->setRecipe($recipe);
+                $review->setUser($user);
+                $review->setCreatedAt(new \DateTime());
+                $entityManager->persist($review);
+                $entityManager->flush();
+
+                $this->addFlash('success','recipe.flash.comment_added');
+                return $this->redirectToRoute('app_home_show',['id'=>$id]);
+            } else {
+                $this->addFlash('error', 'recipe.flash.form_error');
             }
-
-            $review->setRecipe($recipe);
-            $review->setUser($user);
-            $review->setCreatedAt(new \DateTime());
-            $entityManager->persist($review);
-            $entityManager->flush();
-
-            $this->addFlash('success','recipe.flash.comment_added');
-            return $this->redirectToRoute('app_home_show',['id'=>$id]);
         }
         return $this->render('user/home_show.html.twig',[
             'recipe'=>$recipe,
             'reviewForm' => $form->createView(),
-        ]);
+            'relatedCuisine' => $recommendations['relatedCuisine'],
+            'chefSpecials' => $recommendations['chefSpecials'],
+            'currentMealType' => $recommendations['mealType'],          
+          ]);
     }
 
     #[Route('/api/recipe/{id}/scale', name: 'api_recipe_scale', methods: ['GET'])]

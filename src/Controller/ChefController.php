@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\DTO\RecipeInputDTO;
 use App\Entity\Recipe;
 use App\Entity\RecipeView;
 use App\Entity\Region;
@@ -9,6 +10,7 @@ use App\Form\RecipeType;
 use App\Repository\IngredientRepository;
 use App\Repository\RecipeRepository;
 use App\Repository\RegionRepository;
+use App\Service\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -50,49 +52,57 @@ final class ChefController extends AbstractController
   }
 
   #[Route('/chef/recipe/new',name:'app_chef_recipe_new')]
-  public function new(EntityManagerInterface $entityManager, Request $request, SluggerInterface $slugger, RegionRepository $regionRepository,IngredientRepository $ingredient ):Response
+  public function new(EntityManagerInterface $entityManager,
+   Request $request, 
+    RegionRepository $regionRepository,
+    FileUploader $fileUploader,
+ ):Response
   {
-    $recipe = new Recipe();
-    // Set the current user as the chef automatically
-    $recipe->setChef($this->getUser());
-
-    $form = $this->createForm(RecipeType::class, $recipe);
+    $dto = new RecipeInputDTO();
+    $form = $this->createForm(RecipeType::class, $dto);
     $form->handleRequest($request);
-
-    if($form->isSubmitted()) {
-        if ($form->isValid()) {
-            $imageFile = $form->get('image')->getData();
-
-            if ($imageFile) {
-                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
-
-                try {
-                    $imageFile->move(
-                        $this->getParameter('kernel.project_dir').'/public/uploads/recipes',
-                        $newFilename
-                    );
-                } catch (FileException $e) {
-                    $this->addFlash('error', 'There was an issue uploading your image.');
-                }
-
-                $recipe->setImage($newFilename);
-            }
-            $entityManager->persist($recipe);
-            
-            foreach ($recipe->getIngredients()as $singleIngredient) {
-                $singleIngredient->setRecipe($recipe);
-                $entityManager->persist($singleIngredient);
-            }
-            
-            $entityManager->flush();
-            $this->addFlash('success', 'Recipe created successfully!');
-            return $this->redirectToRoute('app_chef_recipe');
-        } else {
-            $this->addFlash('error', 'Please check the form for errors. Some fields are invalid.');
+    if($form ->isSubmitted() && $form->isValid()){
+        $recipe = new Recipe();
+        $recipe ->setTitle($dto->title);
+        $recipe ->setInstructions($dto ->instructions);
+    $recipe->setBaseServings($dto->baseServings);
+    $recipe->setMealType($dto->mealType);
+    $recipe->setChef($this->getUser());
+    
+    $regionName = trim($form->get('regionName')->getData()); 
+    if ($regionName) {
+        $region = $regionRepository->findOneBy(['name' => $regionName]);
+        if (!$region) {
+            $region = new Region();
+            $region->setName($regionName);
+            $entityManager->persist($region);
         }
+        $recipe->setRegion($region);
     }
+
+     if($dto->image){
+        $fileName = $fileUploader->upload($dto->image);
+        
+        if($fileName)  {
+            $recipe->setImage($fileName);
+        }else{
+            $this->addFlash('error', 'There Are Someting  issue With the this file out imge!.');
+        }
+     }      
+    
+     $entityManager->persist($recipe);
+
+     foreach ($dto->ingredients as $singleIngredient) {
+            $singleIngredient->setRecipe($recipe);
+            $entityManager->persist($singleIngredient);
+        }
+        
+        $entityManager->flush();
+        
+        $this->addFlash('success', 'Recipe created successfully with DTO & Service!');
+        return $this->redirectToRoute('app_chef_recipe');
+    }
+
     $regions = $regionRepository->findAll();
     return $this->render('chef/recipe_new.html.twig',[
         'form' => $form->createView(),
@@ -130,11 +140,27 @@ final class ChefController extends AbstractController
     }
 
     $form = $this->createForm(RecipeType::class, $recipe);
+    if ($recipe->getRegion()) {
+        $form->get('regionName')->setData($recipe->getRegion()->getName());
+    }
     
     $form->handleRequest($request);
 
     if($form->isSubmitted()) {
         if ($form->isValid()) {
+            $regionName = trim($form->get('regionName')->getData()); 
+            if ($regionName) {
+                $region = $regionRepository->findOneBy(['name' => $regionName]);
+                if (!$region) {
+                    $region = new Region();
+                    $region->setName($regionName);
+                    $entityManager->persist($region);
+                }
+                $recipe->setRegion($region);
+            } else {
+                $recipe->setRegion(null);
+            }
+
             $imageFile = $form->get('image')->getData();
             if ($imageFile) {
                 $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);

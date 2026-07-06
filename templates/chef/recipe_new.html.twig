@@ -25,7 +25,8 @@
 
 {% block chef_content %}
     <div class="card" style="max-width: 800px;">
-        {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'enctype': 'multipart/form-data'}}) }}
+        {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
+            {{ form_errors(form) }}
             
             <div class="form-group">
                 {{ form_label(form.title, 'Recipe Title') }}

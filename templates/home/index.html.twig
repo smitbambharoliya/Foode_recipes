@@ -1,61 +1,378 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Food Recipe - Discover Culinary Magic{% endblock %}
+{% block title %}FoodE — Culinary Magic, Redefined{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/landing.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/landing.css') }}?v={{ random() }}">
 {% endblock %}
 
 {% block body %}
-    <div class="hero">
-        <div class="overlay"></div>
-        <nav>
-            <div class="logo">Food Recipe</div>
+
+    {# ===== NAVIGATION ===== #}
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="{{ path('app_home') }}" class="nav-logo">
+                <span class="logo-icon">🍽</span>
+                <span class="logo-text">Food<span class="logo-accent">E</span></span>
+            </a>
             <ul class="nav-links">
-                <li><a href="{{ path('app_home') }}">Home</a></li>
-                <li><a href="#">Discover</a></li>
+                <li><a href="{{ path('app_home') }}" class="nav-link active">Home</a></li>
+                <li><a href="#features" class="nav-link">Discover</a></li>
+                <li><a href="#stats" class="nav-link">About</a></li>
                 {% if app.user %}
-                    <li><a href="{{ path('app_logout') }}">Logout</a></li>
+                    <li>
+                        <a href="{{ path('app_logout') }}" class="nav-btn nav-btn-outline">
+                            <span>Logout</span>
+                        </a>
+                    </li>
                 {% else %}
-                    <li><a href="{{ path('app_login') }}">Login</a></li>
-                    <li><a href="{{ path('app_register') }}">Register</a></li>
+                    <li><a href="{{ path('app_login') }}" class="nav-link">Login</a></li>
+                    <li>
+                        <a href="{{ path('app_register') }}" class="nav-btn nav-btn-primary">
+                            <span>Get Started</span>
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                        </a>
+                    </li>
                 {% endif %}
             </ul>
-        </nav>
-        
-        <div class="hero-content">
-            <h1>Culinary Magic, Redefined.</h1>
-            <p>Experience thousands of premium recipes. Adjust portions dynamically and watch the ingredients scale instantly. Your ultimate cooking companion is here.</p>
-            <a href="#calculator" class="cta-btn">Start Exploring</a>
+            <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    {# ===== HERO SECTION ===== #}
+    <section class="hero" id="hero">
+        <div class="hero-bg-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+        </div>
+        <div class="hero-particles" id="particles"></div>
+
+        <div class="hero-container">
+            <div class="hero-badge">
+                <span class="badge-dot"></span>
+                <span>The #1 Food Recipe Platform</span>
+            </div>
+
+            <h1 class="hero-title">
+                Culinary
+                <span class="title-gradient">Magic</span>,<br>
+                Redefined.
+            </h1>
+
+            <p class="hero-subtitle">
+                Discover thousands of premium recipes. Scale ingredients dynamically,
+                explore cuisines worldwide, and transform every meal into an experience.
+            </p>
+
+            <div class="hero-actions">
+                {% if app.user %}
+                    <a href="#features" class="btn-primary-hero">
+                        <span>Explore Recipes</span>
+                        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                    </a>
+                {% else %}
+                    <a href="{{ path('app_register') }}" class="btn-primary-hero">
+                        <span>Start For Free</span>
+                        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                    </a>
+                    <a href="{{ path('app_login') }}" class="btn-secondary-hero">
+                        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <span>Watch Demo</span>
+                    </a>
+                {% endif %}
+            </div>
+
+            <div class="hero-social-proof">
+                <div class="avatar-group">
+                    <div class="avatar" style="background:linear-gradient(135deg,#f093fb,#f5576c)">A</div>
+                    <div class="avatar" style="background:linear-gradient(135deg,#4facfe,#00f2fe)">B</div>
+                    <div class="avatar" style="background:linear-gradient(135deg,#43e97b,#38f9d7)">C</div>
+                    <div class="avatar" style="background:linear-gradient(135deg,#fa709a,#fee140)">D</div>
+                </div>
+                <div class="proof-text">
+                    <div class="stars">★★★★★</div>
+                    <span>Loved by <strong>10,000+</strong> food enthusiasts</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-visual">
+            <div class="recipe-cards-showcase">
+                <div class="showcase-card card-main">
+                    <div class="card-image" style="background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%)">
+                        <span class="card-emoji">🍝</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-tag">Italian</span>
+                        <h3>Classic Carbonara</h3>
+                        <div class="card-meta">
+                            <span>⏱ 25 min</span>
+                            <span>⭐ 4.9</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="showcase-card card-float-1">
+                    <div class="card-image" style="background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%)">
+                        <span class="card-emoji">🍜</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-tag">Asian</span>
+                        <h3>Ramen Bowl</h3>
+                        <div class="card-meta">
+                            <span>⏱ 45 min</span>
+                            <span>⭐ 4.8</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="showcase-card card-float-2">
+                    <div class="card-image" style="background:linear-gradient(135deg,#43e97b 0%,#38f9d7 100%)">
+                        <span class="card-emoji">🥗</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-tag">Healthy</span>
+                        <h3>Greek Salad</h3>
+                        <div class="card-meta">
+                            <span>⏱ 10 min</span>
+                            <span>⭐ 4.7</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="floating-ingredient ing-1">🧄</div>
+                <div class="floating-ingredient ing-2">🌿</div>
+                <div class="floating-ingredient ing-3">🍋</div>
+                <div class="floating-ingredient ing-4">🫒</div>
+                <div class="floating-ingredient ing-5">🌶</div>
+            </div>
+        </div>
+
+        <div class="hero-scroll-hint">
+            <div class="scroll-mouse">
+                <div class="scroll-wheel"></div>
+            </div>
+            <span>Scroll to explore</span>
+        </div>
+    </section>
+
+    {# ===== MARQUEE STRIP ===== #}
+    <div class="marquee-strip">
+        <div class="marquee-track">
+            <span>🍕 Italian Cuisine</span>
+            <span>🍣 Japanese Sushi</span>
+            <span>🥘 Spanish Paella</span>
+            <span>🍛 Indian Curry</span>
+            <span>🥩 BBQ & Grills</span>
+            <span>🧁 Pastry & Baking</span>
+            <span>🍹 Cocktails</span>
+            <span>🥗 Vegan Delights</span>
+            <span>🍕 Italian Cuisine</span>
+            <span>🍣 Japanese Sushi</span>
+            <span>🥘 Spanish Paella</span>
+            <span>🍛 Indian Curry</span>
+            <span>🥩 BBQ & Grills</span>
+            <span>🧁 Pastry & Baking</span>
+            <span>🍹 Cocktails</span>
+            <span>🥗 Vegan Delights</span>
         </div>
     </div>
 
-    <section id="calculator" class="calculator-section">
-        <div class="floating-circle circle-1"></div>
-        <div class="floating-circle circle-2"></div>
-        
-        <div class="glass-card">
-            <h2>Smart Scaling Engine</h2>
-            <p>Featured: Paneer Tikka Masala</p>
-            
-            <div class="input-group">
-                <label for="people-count">How many servings do you need?</label>
-                <input type="number" id="people-count" value="2" min="1" max="100">
+    {# ===== FEATURES SECTION ===== #}
+    <section class="features" id="features">
+        <div class="section-container">
+            <div class="section-header">
+                <span class="section-eyebrow">Why Choose FoodE</span>
+                <h2 class="section-title">Everything You Need to <br><span class="title-gradient">Cook Like a Pro</span></h2>
+                <p class="section-subtitle">A complete platform built for passionate home cooks and professional chefs alike.</p>
             </div>
 
-            <div class="ingredients-list">
-                <h3>Calculated Ingredients</h3>
-                <ul id="ingredients">
-                    <!-- Ingredients will be injected by JS -->
-                </ul>
+            <div class="features-grid">
+                <div class="feature-card feature-card-large">
+                    <div class="feature-icon-wrap">
+                        <div class="feature-icon">📊</div>
+                    </div>
+                    <h3>Smart Portion Calculator</h3>
+                    <p>Adjust servings on the fly — ingredients scale automatically with mathematical precision. Perfect for cooking for 1 or a crowd of 100.</p>
+                    <div class="feature-tag">Most Popular</div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon-wrap">
+                        <div class="feature-icon">🌍</div>
+                    </div>
+                    <h3>Global Cuisines</h3>
+                    <p>Explore 50+ world cuisines with authentic recipes curated by expert chefs.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon-wrap">
+                        <div class="feature-icon">⏱</div>
+                    </div>
+                    <h3>Smart Timers</h3>
+                    <p>Built-in cooking timers with step-by-step guidance for flawless results every time.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon-wrap">
+                        <div class="feature-icon">❤️</div>
+                    </div>
+                    <h3>Save & Organize</h3>
+                    <p>Build your personal cookbook. Categorize, tag, and access your favorite recipes instantly.</p>
+                </div>
+
+                <div class="feature-card feature-card-wide">
+                    <div class="feature-icon-wrap">
+                        <div class="feature-icon">👨‍🍳</div>
+                    </div>
+                    <h3>Chef Profiles</h3>
+                    <p>Follow renowned chefs and discover their signature recipes. Get inspired by the masters of culinary art and learn their techniques directly.</p>
+                    <a href="#" class="feature-link">
+                        Explore Chefs →
+                    </a>
+                </div>
             </div>
         </div>
     </section>
+
+    {# ===== STATS SECTION ===== #}
+    <section class="stats" id="stats">
+        <div class="stats-bg-orb stats-orb-1"></div>
+        <div class="stats-bg-orb stats-orb-2"></div>
+        <div class="section-container">
+            <div class="stats-grid">
+                <div class="stat-item" data-count="10000">
+                    <div class="stat-number"><span class="count-up">10,000</span><span class="stat-plus">+</span></div>
+                    <div class="stat-label">Recipes Available</div>
+                    <div class="stat-bar"><div class="stat-bar-fill" style="width:92%"></div></div>
+                </div>
+                <div class="stat-item" data-count="500">
+                    <div class="stat-number"><span class="count-up">500</span><span class="stat-plus">+</span></div>
+                    <div class="stat-label">Master Chefs</div>
+                    <div class="stat-bar"><div class="stat-bar-fill" style="width:75%"></div></div>
+                </div>
+                <div class="stat-item" data-count="50">
+                    <div class="stat-number"><span class="count-up">50</span><span class="stat-plus">+</span></div>
+                    <div class="stat-label">World Cuisines</div>
+                    <div class="stat-bar"><div class="stat-bar-fill" style="width:85%"></div></div>
+                </div>
+                <div class="stat-item" data-count="98">
+                    <div class="stat-number"><span class="count-up">98</span><span class="stat-plus">%</span></div>
+                    <div class="stat-label">Happy Cooks</div>
+                    <div class="stat-bar"><div class="stat-bar-fill" style="width:98%"></div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# ===== HOW IT WORKS ===== #}
+    <section class="how-it-works">
+        <div class="section-container">
+            <div class="section-header">
+                <span class="section-eyebrow">Simple Process</span>
+                <h2 class="section-title">Start Cooking in <span class="title-gradient">3 Easy Steps</span></h2>
+            </div>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number">01</div>
+                    <div class="step-icon">🔍</div>
+                    <h3>Discover</h3>
+                    <p>Browse thousands of recipes by cuisine, dietary preference, or cook time.</p>
+                    <div class="step-connector"></div>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">02</div>
+                    <div class="step-icon">⚖️</div>
+                    <h3>Customize</h3>
+                    <p>Adjust portions for your group size and watch ingredients scale instantly.</p>
+                    <div class="step-connector"></div>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">03</div>
+                    <div class="step-icon">🍽</div>
+                    <h3>Cook & Enjoy</h3>
+                    <p>Follow step-by-step instructions and create restaurant-quality meals at home.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# ===== CTA SECTION ===== #}
+    <section class="cta-section">
+        <div class="cta-glow cta-glow-1"></div>
+        <div class="cta-glow cta-glow-2"></div>
+        <div class="section-container">
+            <div class="cta-content">
+                <div class="cta-badge">🎉 Free Forever Plan Available</div>
+                <h2 class="cta-title">Ready to Transform<br>Your <span class="title-gradient">Kitchen Experience?</span></h2>
+                <p class="cta-subtitle">Join thousands of passionate cooks who have already elevated their culinary journey with FoodE.</p>
+                <div class="cta-actions">
+                    {% if app.user %}
+                        <a href="#features" class="btn-primary-hero">
+                            <span>Explore Now</span>
+                            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                        </a>
+                    {% else %}
+                        <a href="{{ path('app_register') }}" class="btn-primary-hero">
+                            <span>Create Free Account</span>
+                            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                        </a>
+                        <a href="{{ path('app_login') }}" class="btn-ghost-hero">
+                            Already have an account?
+                        </a>
+                    {% endif %}
+                </div>
+                <div class="cta-features-list">
+                    <span>✓ No credit card required</span>
+                    <span>✓ Unlimited recipe access</span>
+                    <span>✓ Cancel anytime</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# ===== FOOTER ===== #}
+    <footer class="footer">
+        <div class="section-container">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <a href="{{ path('app_home') }}" class="nav-logo">
+                        <span class="logo-icon">🍽</span>
+                        <span class="logo-text">Food<span class="logo-accent">E</span></span>
+                    </a>
+                    <p>Making every meal an extraordinary experience since 2024.</p>
+                </div>
+                <div class="footer-links-group">
+                    <h4>Platform</h4>
+                    <ul>
+                        <li><a href="#">Browse Recipes</a></li>
+                        <li><a href="#">Chef Profiles</a></li>
+                        <li><a href="#">Cuisine Guide</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links-group">
+                    <h4>Account</h4>
+                    <ul>
+                        {% if app.user %}
+                            <li><a href="{{ path('app_logout') }}">Logout</a></li>
+                        {% else %}
+                            <li><a href="{{ path('app_login') }}">Login</a></li>
+                            <li><a href="{{ path('app_register') }}">Register</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2024 FoodE. All rights reserved. Crafted with ❤️ for food lovers.</p>
+            </div>
+        </div>
+    </footer>
+
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
-    <script src="{{ asset('js/landing.js') }}"></script>
+    <script src="{{ asset('js/landing.js') }}?v={{ random() }}"></script>
 {% endblock %}

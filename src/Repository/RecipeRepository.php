@@ -119,6 +119,34 @@ class RecipeRepository extends ServiceEntityRepository
                     ->getQuery()
                     ->getResult();
     }
+
+    public function findSimilarCuisineByTime(int $regionId, int $currentRecipeId,string $curentMealType,int $limit = 4): array
+    {
+      return $this->createQueryBuilder('r')
+                  ->andWhere('r.region = :regionId')
+                  ->andWhere('r.id != :currentRecipeId')
+                  ->andWhere('r.meal_type = :mealType')
+                  ->setParameter('regionId', $regionId)
+                  ->setParameter('currentRecipeId', $currentRecipeId)
+                  ->setParameter('mealType',$curentMealType)
+                  ->setMaxResults($limit)
+                  ->getQuery()
+                  ->getResult();
+    }
+    public function findChefSpecialByTime(int $chefId,int $currentRecipeId,string $mealType,int $limit =3): array
+    {
+
+        return $this->createQueryBuilder('r')
+                    ->andWhere('r.chef = :chefId')
+                    ->andWhere('r.id != :currentRecipeId')
+                    ->andWhere('r.meal_type = :mealType')
+                    ->setParameter('currentRecipeId', $currentRecipeId)
+                    ->setParameter('mealType',$mealType)
+                    ->setParameter('chefId',$chefId)
+                    ->setMaxResults($limit)
+                    ->getQuery()
+                    ->getResult();
+    }
 }
 
 

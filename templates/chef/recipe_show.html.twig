@@ -150,6 +150,7 @@
                     
                     <form method="post" action="{{ path('app_chef_recipe_delete', {'id': recipe.id}) }}" style="display: inline-block;" onsubmit="return confirm('Are you sure you want to delete this recipe?');">
                         <input type="hidden" name="_method" value="DELETE">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ recipe.id) }}">
                         <button type="submit" class="btn-outline" style="border-color: #ef4444; color: #ef4444; background: transparent; padding: 8px 23px;">
                             <i class="fas fa-trash"></i> Delete
                         </button>

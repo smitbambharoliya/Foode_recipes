@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\DTO\RecipeInputDTO;
 use App\Entity\Recipe;
 use App\Entity\Region;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -17,15 +18,10 @@ use Symfony\Component\Validator\Constraints\LessThanOrEqual;
 use Symfony\Component\Validator\Constraints\Type;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use App\Form\DataTransformer\RegionToTextTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class RecipeType extends AbstractType
 {
-    public function __construct(
-        private RegionToTextTransformer $transformer,
-    ) {
-    }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -69,8 +65,9 @@ class RecipeType extends AbstractType
                 'by_reference' => false,
                 'label' => false,
             ])
-            ->add('region', TextType::class, [
+            ->add('regionName', TextType::class, [
                 'label' => 'Region / Cuisine',
+                'mapped' => false,
                 'attr' => [
                     'class' => 'pill-input',
                     'placeholder' => 'e.g. Indian, Italian, Mexican...',
@@ -113,15 +110,12 @@ class RecipeType extends AbstractType
                 ],
             ])
         ;
-
-        $builder->get('region')
-            ->addModelTransformer($this->transformer);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Recipe::class,
+            'data_class' => RecipeInputDTO::class,
         ]);
     }
 }
