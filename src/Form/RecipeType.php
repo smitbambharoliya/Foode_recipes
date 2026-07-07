@@ -67,7 +67,7 @@ class RecipeType extends AbstractType
             ])
             ->add('regionName', TextType::class, [
                 'label' => 'Region / Cuisine',
-                'mapped' => false,
+                'required' => false,
                 'attr' => [
                     'class' => 'pill-input',
                     'placeholder' => 'e.g. Indian, Italian, Mexican...',
@@ -78,7 +78,7 @@ class RecipeType extends AbstractType
                     new NotBlank(['message' => 'Please provide a region or cuisine']),
                 ],
             ])
-            ->add('meal_type', ChoiceType::class, [
+            ->add('mealtype', ChoiceType::class, [
                 'label' => 'Meal Type',
                 'choices'  => [
                     'Breakfast' => 'Breakfast',
@@ -91,6 +91,17 @@ class RecipeType extends AbstractType
                 'attr' => ['class' => 'pill-input'],
                 'constraints' => [
                     new NotBlank(['message' => 'Please select a meal type']),
+                ],
+            ])
+            ->add('isVeg', ChoiceType::class, [
+                'label' => 'Is Veg?',
+                'choices'  => [
+                    'Veg' => true,
+                    'Non-Veg' => false,
+                ],
+                'attr' => ['class' => 'pill-input'],
+                'constraints' => [
+                    new NotBlank(['message' => 'Please select if the recipe is veg or non-veg']),
                 ],
             ])
             ->add('image', FileType::class, [

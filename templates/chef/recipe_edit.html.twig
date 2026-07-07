@@ -62,14 +62,14 @@
                     {{ form_errors(form.baseServings) }}
                 </div>
                 <div class="form-group">
-                    {{ form_label(form.meal_type) }}
-                    {{ form_widget(form.meal_type) }}
-                    {{ form_errors(form.meal_type) }}
+                    {{ form_label(form.mealtype) }}
+                    {{ form_widget(form.mealtype) }}
+                    {{ form_errors(form.mealtype) }}
                 </div>
                 <div class="form-group">
-                    {{ form_label(form.region) }}
-                    {{ form_widget(form.region) }}
-                    {{ form_errors(form.region) }}
+                    {{ form_label(form.regionName) }}
+                    {{ form_widget(form.regionName) }}
+                    {{ form_errors(form.regionName) }}
                     <datalist id="region-list">
                         {% for r in regions %}
                             <option value="{{ r.name }}">

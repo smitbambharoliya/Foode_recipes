@@ -24,9 +24,7 @@ class LoginSuccessSubscriber implements EventSubscriberInterface
     {
         $user = $event->getUser();
 
-        // Check if the user has the ROLE_CHEF role
         if (in_array('ROLE_CHEF', $user->getRoles(), true)) {
-            // Redirect chefs to their dashboard
             $response = new RedirectResponse($this->urlGenerator->generate('app_chef_dashboard'));
             $event->setResponse($response);
         } else {

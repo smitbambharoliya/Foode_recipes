@@ -13,7 +13,6 @@ class RecipeScaler
         foreach ($recipe->getIngredients() as $ingredient) {
             $calculatedAmount = ($ingredient->getBaseQuantity() * $currentServings) / $baseServings;
             
-
             $calculatedAmount = round($calculatedAmount, 1);
 
             $scaledIngredients[] = [

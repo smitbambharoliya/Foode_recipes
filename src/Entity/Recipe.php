@@ -61,6 +61,9 @@ class Recipe
     #[ORM\Column(type: 'datetime_immutable', nullable:true)]
     private ?\DateTimeImmutable $createdAt = null;
 
+    #[ORM\Column]
+    private ?bool $isVeg = null;
+
 
 
     public function __construct()
@@ -261,6 +264,18 @@ class Recipe
     public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function isVeg(): ?bool
+    {
+        return $this->isVeg;
+    }
+
+    public function setIsVeg(bool $isVeg): static
+    {
+        $this->isVeg = $isVeg;
 
         return $this;
     }

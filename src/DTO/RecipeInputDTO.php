@@ -16,12 +16,14 @@ class  RecipeInputDTO
     #[Assert\NotBlank]    
     public ?string $instructions = null;
 
+    #[Assert\NotNull(message:"Choose either veg or non-veg")]
+    public ?bool $isVeg = null;
 
     #[Assert\NotBlank]
     #[Assert\Positive]    
     public ?int $baseServings = null;
 
-    public ?string $mealType = null;
+    public ?string $mealtype = null;
     public ?string $regionName = null;
 
     public ?array $ingredients = [];
