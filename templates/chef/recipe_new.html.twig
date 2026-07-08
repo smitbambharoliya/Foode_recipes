@@ -211,7 +211,7 @@
 
 {% block chef_content %}
     <div class="card futuristic-card" style="max-width: 900px;">
-        {{ form_start(form, {'attr': {'enctype': 'multipart/form-data', 'class': 'futuristic-form-wrapper'}}) }}
+        {{ form_start(form, {'attr': {'enctype': 'multipart/form-data', 'class': 'futuristic-form-wrapper', 'novalidate': 'novalidate'}}) }}
             
             {% if not form.vars.valid %}
                 <div style="background: #ffebee; border-left: 4px solid #f44336; padding: 15px; margin-bottom: 20px; border-radius: 8px; color: #d32f2f; font-weight: bold;">
@@ -252,7 +252,7 @@
                     {{ form_widget(form.regionName, {'attr': {'class': 'futuristic-input'}}) }}
                     <div class="form-error-msg">{{ form_errors(form.regionName) }}</div>
                     <datalist id="region-list">
-                        {% for r in regions %}
+                        {% for r in region  %}
                             <option value="{{ r.name }}">
                         {% endfor %}
                     </datalist>
@@ -315,7 +315,7 @@
                 <label class="futuristic-upload">
                     <i class="fas fa-cloud-upload-alt"></i>
                     <span>Click or Drag to Upload Image</span>
-                    {{ form_widget(form.image, {'attr': {'style': 'display: none;'}}) }}
+                    {{ form_widget(form.image, {'attr': {'style': 'opacity: 0; position: absolute; z-index: -1; width: 1px; height: 1px;'}}) }}
                 </label>
                 <div class="form-error-msg">{{ form_errors(form.image) }}</div>
             </div>
@@ -377,6 +377,59 @@
     // Add one empty ingredient row by default if the list is empty
     if(list.children.length === 0) {
         addButton.click();
+    }
+    
+    // Custom Validation
+    const form = document.querySelector('.futuristic-form-wrapper');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            let isValid = true;
+            let firstInvalid = null;
+            
+            // Check all inputs that might be required
+            const inputs = form.querySelectorAll('input, textarea, select');
+            inputs.forEach(input => {
+                // Clear old errors
+                input.style.borderColor = '';
+                
+                // If it's required (by HTML5) or if it's empty but shouldn't be (based on basic checks)
+                if (input.hasAttribute('required') && !input.value.trim()) {
+                    isValid = false;
+                    input.style.borderColor = '#f44336';
+                    
+                    if (!firstInvalid) {
+                        firstInvalid = input;
+                    }
+                }
+            });
+            
+            if (!isValid) {
+                e.preventDefault(); // Stop submission
+                
+                // Create or update a custom error message banner at the top
+                let errorBanner = document.getElementById('custom-js-error');
+                if (!errorBanner) {
+                    errorBanner = document.createElement('div');
+                    errorBanner.id = 'custom-js-error';
+                    errorBanner.style.background = '#ffebee';
+                    errorBanner.style.borderLeft = '4px solid #f44336';
+                    errorBanner.style.padding = '15px';
+                    errorBanner.style.marginBottom = '20px';
+                    errorBanner.style.borderRadius = '8px';
+                    errorBanner.style.color = '#d32f2f';
+                    errorBanner.style.fontWeight = 'bold';
+                    form.prepend(errorBanner);
+                }
+                errorBanner.innerHTML = '<i class="fas fa-exclamation-triangle"></i> ફોર્મમાં અમુક જરૂરી વિગતો (લાલ બોર્ડર વાળી) ભરવાની બાકી છે. કૃપા કરીને તે ભરો.';
+                
+                // Scroll to the first error
+                if (firstInvalid) {
+                    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    // Briefly highlight the field
+                    firstInvalid.focus();
+                }
+            }
+        });
     }
 })();
 </script>

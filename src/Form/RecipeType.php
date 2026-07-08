@@ -3,9 +3,6 @@
 namespace App\Form;
 
 use App\DTO\RecipeInputDTO;
-use App\Entity\Recipe;
-use App\Entity\Region;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -19,6 +16,10 @@ use Symfony\Component\Validator\Constraints\Type;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+
+
+
 
 class RecipeType extends AbstractType
 {
@@ -46,7 +47,7 @@ class RecipeType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('baseServings', null, [
+            ->add('baseServings', IntegerType::class, [
                 'constraints' => [
                     new NotBlank(['message' => 'Please specify the number of servings']),
                     new Type(['type' => 'integer', 'message' => 'The value {{ value }} is not a valid integer.']),
@@ -106,7 +107,6 @@ class RecipeType extends AbstractType
             ])
             ->add('image', FileType::class, [
                 'label' => 'Recipe Image (JPG/PNG)',
-                'mapped' => false,
                 'required' => false,
                 'constraints' => [
                     new File([

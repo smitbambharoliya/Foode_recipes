@@ -15,8 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\String\Slugger\SluggerInterface;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
+
 
 #[IsGranted('ROLE_CHEF')]
 final class ChefController extends AbstractController
@@ -28,7 +27,6 @@ final class ChefController extends AbstractController
     $recipes = $recipeRepository->findBy(['chef'=>$this->getUser()]);
     $recipeCount = count($recipes);
     
-    // Sort to get the most recent ones (assuming higher ID = more recent, or just array reverse)
     $recentRecipes = array_slice(array_reverse($recipes), 0, 3);
     $regions = $regionRepository->findAll();
     
@@ -49,28 +47,30 @@ final class ChefController extends AbstractController
     ]);
   }
 
-  #[Route('/chef/recipe/new',name:'app_chef_recipe_new')]
-  public function new(EntityManagerInterface $entityManager,
-   Request $request, 
+ #[Route('/chef/recipe/new', name: 'app_chef_recipe_new')]
+public function new(
+    EntityManagerInterface $entityManager,
+    Request $request, 
     RegionRepository $regionRepository,
-    FileUploader $fileUploader,
- ):Response
-  {
+    FileUploader $fileUploader
+): Response {
     $dto = new RecipeInputDTO();
     $form = $this->createForm(RecipeType::class, $dto);
     $form->handleRequest($request);
+
     if ($form->isSubmitted()) {
+           
         if ($form->isValid()) {
-          
             
             $recipe = new Recipe();
             $recipe->setTitle($dto->title);
             $recipe->setInstructions($dto->instructions);
             $recipe->setBaseServings($dto->baseServings);
-            $recipe->setMealType($dto->mealtype);
+            $recipe->setMealType($dto->mealtype); 
             $recipe->setChef($this->getUser());
             $recipe->setIsVeg($dto->isVeg);
-            $regionName = trim($form->get('regionName')->getData()); 
+
+            $regionName = trim($dto->regionName ?? ''); 
             if ($regionName) {
                 $region = $regionRepository->findOneBy(['name' => $regionName]);
                 if (!$region) {
@@ -81,25 +81,27 @@ final class ChefController extends AbstractController
                 $recipe->setRegion($region);
             }
 
-            $imageFile = $form->get('image')->getData();
-            if ($imageFile) {
-                $fileName = $fileUploader->upload($imageFile);
-                
+       
+            if ($dto->image) {
+                $fileName = $fileUploader->upload($dto->image);
                 if ($fileName) {
                     $recipe->setImage($fileName);
                 } else {
-                    $this->addFlash('error', 'There Are Someting  issue With the this file out imge!.');
+                    $this->addFlash('error', 'There was an issue uploading your image.');
                 }
             }      
             
             $entityManager->persist($recipe);
 
-            foreach ($dto->ingredients as $singleIngredient) {
+      
+            $ingredientsList = $dto->ingredients ?? [];
+            foreach ($ingredientsList as $singleIngredient) {
                 $singleIngredient->setRecipe($recipe);
                 $entityManager->persist($singleIngredient);
             }
             
             $entityManager->flush();
+            
             
             $this->addFlash('success', 'Recipe created successfully!');
             return $this->redirectToRoute('app_chef_recipe');
@@ -109,13 +111,11 @@ final class ChefController extends AbstractController
     }
 
     $regions = $regionRepository->findAll();
-    return $this->render('chef/recipe_new.html.twig',[
+    return $this->render('chef/recipe_new.html.twig', [
         'form' => $form->createView(),
-        'regions' => $regions,
+        'region' => $regions,
     ]);
-  }
-
-  
+}
 
   #[Route('/recipe/show/{id}',name:'app_chef_recipe_show')]
   public function show(Recipe $recipe):Response
@@ -140,7 +140,6 @@ final class ChefController extends AbstractController
     Request $request, 
     FileUploader $fileUploader,
     RegionRepository $regionRepository,
-
     ):Response
   {
     if (!$recipe) {
@@ -153,12 +152,11 @@ final class ChefController extends AbstractController
 
     $dto = new RecipeInputDTO();
 
-
     $dto->title = $recipe->getTitle();
     $dto->instructions = $recipe->getInstructions();
     $dto->baseServings = $recipe->getBaseServings();
     $dto->ingredients = $recipe->getIngredients()->toArray();
-    $dto->mealtype = $recipe->getMealType();
+    $dto->mealtype = $recipe->getMealtype();
     $dto->isVeg = $recipe->isVeg();
     $dto->regionName = $recipe->getRegion() ? $recipe->getRegion()->getName() : null;
 
@@ -187,7 +185,6 @@ final class ChefController extends AbstractController
                 $recipe->setRegion(null);
             }
            
-
             if($dto->image){
                 $newfilenmae = $fileUploader->upload($dto->image);
                 if($newfilenmae){
