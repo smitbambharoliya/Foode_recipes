@@ -63,7 +63,7 @@ class RecipeRepository extends ServiceEntityRepository
 
        $qb = $this->createQueryBuilder('r')
 
-                  ->select('r as recipe', 'COUNT(v.id) as viewCount')
+                  ->addSelect( 'COUNT(v.id) as viewCount')
 
                   ->leftJoin('r.recipeViews', 'v')
 

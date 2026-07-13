@@ -17,9 +17,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-
-
-
+use Symfony\Component\Validator\Constraints\NotNull;
 
 class RecipeType extends AbstractType
 {
@@ -102,7 +100,7 @@ class RecipeType extends AbstractType
                 ],
                 'attr' => ['class' => 'pill-input'],
                 'constraints' => [
-                    new NotBlank(['message' => 'Please select if the recipe is veg or non-veg']),
+                    new NotNull(['message' => 'Please select if the recipe is veg or non-veg']),
                 ],
             ])
             ->add('image', FileType::class, [

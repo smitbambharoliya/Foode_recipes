@@ -2,9 +2,12 @@
 
 namespace App\Entity;
 
+
 use App\Repository\RecipeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -14,21 +17,30 @@ class Recipe
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['recipe:read','recipe:write'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['recipe:read','recipe:write'])]
+    #[Assert\NotBlank(message:'le titre ne doit pas etre vide')]
+    #[Assert\Length(min:2,max:255,minMessage:'le titre doit contenir au moins 2 caracteres',maxMessage:'le titre doit contenir au plus 255 caracteres')]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['recipe:read','recipe:write'])]
+   
     private ?string $instructions = null;
 
     #[ORM\Column(type: Types::INTEGER, options: ['unsigned' => true, 'default' => 1])]
-    private ?int $baseServings = null;
+    #[Groups(['recipe:read','recipe:write'])]
+        private ?int $baseServings = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['recipe:read','recipe:write'])]
     private ?string $image = null;
 
     #[ORM\ManyToOne(inversedBy: 'recipes')]
+    #[Groups(['recipe:read','recipe:write'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $chef = null;
 
@@ -36,15 +48,18 @@ class Recipe
      * @var Collection<int, Ingredient>
      */
     #[ORM\OneToMany(targetEntity: Ingredient::class, mappedBy: 'recipe', cascade: ['persist', 'remove'])]
+    #[Groups(['recipe:read','recipe:write'])]
     private Collection $ingredients;
 
     #[ORM\ManyToOne(inversedBy: 'recipes', cascade: ['persist'])]
+    #[Groups(['recipe:read','recipe:write'])]
     private ?Region $region = null;
 
     /**
      * @var Collection<int, RecipeView>
      */
     #[ORM\OneToMany(targetEntity: RecipeView::class, mappedBy: 'recipe', cascade: ['persist', 'remove'])]
+    #[Groups(['recipe:read','recipe:write'])]
     private Collection $recipeViews;
 
     
@@ -56,12 +71,17 @@ class Recipe
     private Collection $reviews;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['recipe:read','recipe:write'])]
+    #[Assert\NotBlank(message:'select The meal Type')]
+    #[Assert\Choice(choices: ['Breakfast', 'Lunch', 'Dinner'], message:'this is not a valid meal type select on the breakfast,linch, dinner')]
     private ?string $meal_type = null;
 
     #[ORM\Column(type: 'datetime_immutable', nullable:true)]
+    #[Groups(['recipe:read','recipe:write'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
+    #[Groups(['recipe:read','recipe:write'])]
     private ?bool $isVeg = null;
 
 
