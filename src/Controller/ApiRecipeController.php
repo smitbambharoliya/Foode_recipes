@@ -33,17 +33,20 @@ class ApiRecipeController extends AbstractController
     }
 
 
-    #[Route('/api/recipes/{id}', name:'api_recipe_show', methods:['GET'])]
-    public function show(RecipeRepository $recipeRepository,int $id): JsonResponse
+    #[Route('/api/my-recipes', name:'api_my_recipes', methods:['GET','POST'])]
+    public function myRecipes(RecipeRepository $recipeRepository): JsonResponse
     {
-        $recipe = $recipeRepository->find($id);
+        $user = $this->getUser();
 
-        if(!$recipe){
-            return $this->json([
-                'error'=>'There is not aenay recipe on this id write reale id'
-            ], 404);
-        }
-        $cleanData = [
+       
+
+        $recipes = $recipeRepository->findBy(['chef' => $user]);
+       if(!$user){
+         return new JsonResponse(['error' => 'User not found or not authenticated!'],401);
+       }
+       $cleanData=[];
+       foreach ($recipes as $recipe) {
+        $cleanData[] = [
             'id' =>$recipe->getId(),
             'title' =>$recipe->getTitle(),
             'instructions' =>$recipe->getInstructions(),
@@ -51,8 +54,8 @@ class ApiRecipeController extends AbstractController
             'isVeg' => $recipe->isVeg(),
             'mealType' => $recipe->getMealtype(),
          ];
-
-         return $this->json($cleanData);
+        }
+         return $this->json($cleanData,200);
     }
 
     #[Route('/api/recipes/create', name:'api_recipe_create',methods:["POST"])]
@@ -62,6 +65,11 @@ class ApiRecipeController extends AbstractController
     Request $request
     ): JsonResponse
     {
+
+        $user = $this->getUser();
+        if(!$user){
+            return $this->json(['error' =>'you must be login fast and there come here!..'],401);
+        }
 
         $recipe = $serializer->deserialize(
             $request->getContent(),
@@ -116,6 +124,11 @@ class ApiRecipeController extends AbstractController
             ],404);
         }
 
+        if($recipe->getChef() !== $this->getUser()){
+            return $this->json([
+                'error'=>'You are not authorized to update this recipe!'
+            ],403);
+        }
         $serializer->deserialize(
             $request->getContent(),
             Recipe::class,
@@ -124,19 +137,20 @@ class ApiRecipeController extends AbstractController
             'object_to_populate' => $recipe
             ]
         );
-        $data = json_decode($request->getContent(), true);
 
         if(isset($data['chef_id'])){
             $user = $entityManager->getRepository(User::class)->find($data['chef_id']);
             if(!$user){
-                $recipe->setChef($user);
+            $recipe->setChef($user);
             }
+        }
+
+        $entityManager->flush();
+
         
-    }
-      $entityManager->flush();
        return $this->json([
         'message' => 'Recipe updated successfully!',
-         ]);
+         ],200);
     }
 
     #[Route('/api/recipe/{id}',name:'api_recipe_delete',methods:['DELETE'])]
@@ -147,10 +161,15 @@ class ApiRecipeController extends AbstractController
     ): JsonResponse 
     {
         $recipe = $recipeRepository->find($id);
+
         if(!$recipe){
             return $this->json([
                 'error'=>'Recipe Not Found!'
             ],404);
+        }
+
+        if($recipe->getChef() !== $this->getUser()){
+            return new  JsonResponse(['error' =>'YOu are not The  owener of this recipe!..'],403);
         }
 
         $entityManager->remove($recipe);
@@ -158,6 +177,6 @@ class ApiRecipeController extends AbstractController
 
         return $this->json([
             'message' => 'recipe deleted succssessfully!.',
-        ]);
+        ],200);
     }
 }   

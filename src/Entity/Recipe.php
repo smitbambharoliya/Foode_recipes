@@ -73,7 +73,7 @@ class Recipe
     #[ORM\Column(length: 255)]
     #[Groups(['recipe:read','recipe:write'])]
     #[Assert\NotBlank(message:'select The meal Type')]
-    #[Assert\Choice(choices: ['Breakfast', 'Lunch', 'Dinner'], message:'this is not a valid meal type select on the breakfast,linch, dinner')]
+    #[Assert\Choice(choices: ['Breakfast', 'Lunch', 'Dinner','Snack','Drinks','Dessert'], message:'this is not a valid meal type select on the breakfast,linch, dinner')]
     private ?string $meal_type = null;
 
     #[ORM\Column(type: 'datetime_immutable', nullable:true)]

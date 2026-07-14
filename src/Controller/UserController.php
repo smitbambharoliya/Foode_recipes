@@ -52,7 +52,7 @@ final class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/home/{id}',name:'app_home_show')]
+    #[Route('/home/{id}',name:'app_home_show',requirements: ['id' =>'\d+'])]
     public function show(Request $request,
     RecipeRepository $recipeRepository,
     RecipeRecommendationHelper $recommendationHelper,

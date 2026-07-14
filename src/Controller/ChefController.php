@@ -203,6 +203,7 @@ public function new(
             $this->addFlash('success', 'recipe.flash.updated');
             return $this->redirectToRoute('app_chef_recipe');
         } else {
+         
             $this->addFlash('error', 'Please check the form for errors. Some fields are invalid.');
         }
     }
