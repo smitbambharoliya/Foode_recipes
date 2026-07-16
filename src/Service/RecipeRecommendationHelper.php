@@ -60,6 +60,7 @@ class RecipeRecommendationHelper
             $mealType
         );
 
+    
         return [
             'mealType' => $mealType,
             'relatedCuisine' => $relatedCuisine,

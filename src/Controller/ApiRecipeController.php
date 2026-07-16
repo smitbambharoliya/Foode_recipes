@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Repository\RecipeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -97,6 +98,16 @@ class ApiRecipeController extends AbstractController
         }
 
         $recipe->setChef($user);
+
+        $errors = $validator->validate($recipe);
+        if (count($errors) > 0) {
+            $errorMessages = [];
+            foreach ($errors as $error) {
+                $errorMessages[$error->getPropertyPath()] = $error->getMessage();
+            }
+            return $this->json(['errors' => $errorMessages], 400);
+        }
+
         $entityManager->persist($recipe);
         $entityManager->flush();
 
@@ -147,7 +158,7 @@ class ApiRecipeController extends AbstractController
 
         $entityManager->flush();
 
-        
+
        return $this->json([
         'message' => 'Recipe updated successfully!',
          ],200);
@@ -168,7 +179,7 @@ class ApiRecipeController extends AbstractController
             ],404);
         }
 
-        if($recipe->getChef() !== $this->getUser()){
+    if($recipe->getChef() !== $this->getUser() && !$this->isGranted('ROLE_ADMIN')){
             return new  JsonResponse(['error' =>'YOu are not The  owener of this recipe!..'],403);
         }
 
@@ -177,6 +188,52 @@ class ApiRecipeController extends AbstractController
 
         return $this->json([
             'message' => 'recipe deleted succssessfully!.',
+        ],200);
+    }
+    
+
+    #[Route('/api/recipe/{id}/upload-image', name:'api_recipe_image_folder',methods:['POST'])]
+    public function uploadImage(
+        int $id,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        RecipeRepository $recipeRepository
+    ): JsonResponse
+    {
+        $recipe = $recipeRepository->find($id);
+
+        if(!$recipe){
+            return $this->json(['error' =>'Recipe is not founded!'],404);
+        }
+
+        $uploadedFile = $request->files->get('image');
+
+        if (!$uploadedFile) {
+            return $this->json(['error' => 'No image file provided!'], 400);
+        }
+
+        $uplodedFile = $request->files->get('image');
+        
+        if(!$uplodedFile){
+            return  $this->json(['error' => 'No image is founde there!..'], 400);    
+        }
+
+        $newFilename = uniqid().'.'.$uplodedFile->guessExtension();
+
+        try {
+            $uplodedFile->move(
+                $this->getParameter('kerneal.project_dir').'/public/uploads/recipes',
+                $newFilename
+            );
+        }catch (FileException $e){
+            return $this->json(['error' =>'Failed to save image!..'],500);   
+             }
+ 
+             $recipe->setImageName($newFilename);
+             $entityManager->flush();
+        return $this->json([
+            'message' => 'Recipe image uploade successfully!.',
+            'image_name' =>$newFilename
         ],200);
     }
 }   

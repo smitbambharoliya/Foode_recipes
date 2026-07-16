@@ -35,16 +35,24 @@ final class UserController extends AbstractController
 
         $searchTerm = $request->query->get('search');
         $regionId = $request->query->get('region') ? (int) $request->query->get('region') : null;
+        $vegStatusParam = $request->query->get('vegStatus');
 
-        $recipesWithViews = $recipeRepository->searchGlobal($searchTerm, $regionId);
+        $isVeg = null;
+        if ($vegStatusParam === 'veg') {
+            $isVeg = true;
+        } elseif ($vegStatusParam === 'nonveg') {
+            $isVeg = false;
+        }
+
+        $recipesWithViews = $recipeRepository->searchGlobal($searchTerm, $regionId, $isVeg);
         $regions = $regionRepository->findAll();
-
 
         return $this->render('user/home.html.twig', [
             'recipes'=>$recipesWithViews,
             'regions'=>$regions,
             'selectedRegionId'=>$regionId,
             'searchTerm'=>$searchTerm,
+            'vegStatus'=>$vegStatusParam,
             'displayTitle' => $displayTitle,
             'trendingRecipes' => $trendingRecipes,
             'recommendedRecipes' => $recommendedRecipes,

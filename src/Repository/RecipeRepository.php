@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Recipe;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -18,33 +19,38 @@ class RecipeRepository extends ServiceEntityRepository
 
    
 
-    public function searchGlobal(?string $searchTerm, ?int $regionId = null): array
-{
-    $qb = $this->createQueryBuilder('r')
-        ->select('r as recipe', 'COUNT(DISTINCT v.id) as viewCount') 
-        ->leftJoin('r.recipeViews', 'v')
-        ->leftJoin('r.region', 'reg')
-        ->leftJoin('r.ingredients', 'ing')
-        ->groupBy('r.id');
+    public function searchGlobal(?string $searchTerm, ?int $regionId = null, ?bool $isVeg = null): array
+    {
+        $qb = $this->createQueryBuilder('r')
+            ->select('r as recipe', 'COUNT(DISTINCT v.id) as viewCount') 
+            ->leftJoin('r.recipeViews', 'v')
+            ->leftJoin('r.region', 'reg')
+            ->leftJoin('r.ingredients', 'ing')
+            ->groupBy('r.id');
 
-    if ($searchTerm) {
-        $qb->andWhere(
-            $qb->expr()->orX(
-                'r.title LIKE :search',       
-                'reg.name LIKE :search',     
-                'ing.name LIKE :search'      
+        if ($searchTerm) {
+            $qb->andWhere(
+                $qb->expr()->orX(
+                    'r.title LIKE :search',       
+                    'reg.name LIKE :search',     
+                    'ing.name LIKE :search'      
+                )
             )
-        )
-        ->setParameter('search', '%' . $searchTerm . '%');
-    }
+            ->setParameter('search', '%' . $searchTerm . '%');
+        }
 
-    if ($regionId) {
-        $qb->andWhere('reg.id = :regionId')
-           ->setParameter('regionId', $regionId);
-    }
+        if ($regionId) {
+            $qb->andWhere('reg.id = :regionId')
+               ->setParameter('regionId', $regionId);
+        }
 
-    return $qb->getQuery()->getResult();
-}
+        if ($isVeg !== null) {
+            $qb->andWhere('r.isVeg = :isVeg')
+               ->setParameter('isVeg', $isVeg);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
  
     public function findAllWithViewCount(): array
     {
@@ -111,6 +117,9 @@ class RecipeRepository extends ServiceEntityRepository
                     ->getQuery()
                     ->getResult();
     }
+
+
+
     public function findNewlyAdded(): array
     {
         return $this->createQueryBuilder('r')
@@ -133,6 +142,7 @@ class RecipeRepository extends ServiceEntityRepository
                   ->getQuery()
                   ->getResult();
     }
+
     public function findChefSpecialByTime(int $chefId,int $currentRecipeId,string $mealType,int $limit =3): array
     {
 
@@ -147,6 +157,19 @@ class RecipeRepository extends ServiceEntityRepository
                     ->getQuery()
                     ->getResult();
     }
+
+
+    public function findByVegStatus(bool $isVeg): array
+    {
+       
+        return $this->createQueryBuilder('r')
+                     ->andWhere('r.isVeg = :status')
+                     ->setParameter('status' , $isVeg)
+                     ->getQuery()
+                     ->getResult();
+    }
+
+
 }
 
 

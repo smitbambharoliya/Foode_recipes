@@ -1,26 +1,7 @@
-{% extends 'chef/layout.html.twig' %}
+﻿{% extends 'chef/layout.html.twig' %}
 
 {% block chef_styles %}
-<style>
-    .action-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-    
-    .food-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; }
-    .food-card { background: #fff; border-radius: 20px; padding: 25px 20px; text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.03); transition: all 0.3s; position: relative; border: 1px solid #f9f9f9; }
-    .food-card:hover { border-color: #ff5722; box-shadow: 0 10px 30px rgba(255,87,34,0.1); transform: translateY(-5px); }
-    .food-card img { width: 130px; height: 130px; border-radius: 50%; object-fit: cover; margin: 0 auto 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); border: 4px solid #fff; }
-    .food-card .no-image { width: 130px; height: 130px; border-radius: 50%; background: #f0f0f0; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; color: #aaa; border: 4px solid #fff; }
-    .food-card h3 { font-size: 1.1rem; margin: 0 0 5px 0; color: #222; font-weight: 600; }
-    .food-card .meta { display: flex; justify-content: center; gap: 15px; color: #888; font-size: 0.85rem; margin-bottom: 20px; font-weight: 500; }
-    
-    .card-actions { display: flex; justify-content: center; gap: 10px; border-top: 1px dashed #eee; padding-top: 20px; margin-top: auto; }
-    .btn-icon { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; transition: all 0.3s; font-size: 0.9rem; }
-    .btn-edit { background: #f8f9fa; color: #555; }
-    .btn-edit:hover { background: #e9ecef; color: #111; }
-    .btn-delete { background: #fff5f2; color: #ff5722; }
-    .btn-delete:hover { background: #ff5722; color: #fff; }
-    .btn-view { background: #ff5722; color: #fff; padding: 0 20px; border-radius: 30px; height: 38px; font-weight: 600; text-decoration: none; display: flex; align-items: center; }
-    .btn-view:hover { background: #e64a19; }
-</style>
+<link rel="stylesheet" href="{{ asset('css/chef_recipe.css') }}">
 {% endblock %}
 
 {% block chef_content %}
@@ -66,3 +47,4 @@
         </div>
     {% endif %}
 {% endblock %}
+

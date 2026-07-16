@@ -1,106 +1,9 @@
-{% extends 'chef/layout.html.twig' %}
+﻿{% extends 'chef/layout.html.twig' %}
 
 {% block page_title %}{{ recipe.title }} - Chef View{% endblock %}
 
 {% block chef_styles %}
-<style>
-    .recipe-detail-card {
-        background: #fff;
-        border-radius: 20px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.03);
-        border: 1px solid #f0f0f0;
-        padding: 40px;
-        margin-bottom: 40px;
-    }
-    .back-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        color: #888;
-        text-decoration: none;
-        font-weight: 500;
-        margin-bottom: 25px;
-        transition: color 0.3s;
-    }
-    .back-btn:hover {
-        color: #ff5722;
-    }
-    .recipe-meta-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 40px;
-        margin-bottom: 40px;
-    }
-    @media (max-width: 768px) {
-        .recipe-meta-grid {
-            grid-template-columns: 1fr;
-        }
-    }
-    .recipe-image-preview {
-        width: 100%;
-        border-radius: 15px;
-        overflow: hidden;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-        height: 300px;
-        background: #f8f9fa;
-        position: relative;
-    }
-    .recipe-image-preview img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-    .no-img-preview {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
-        color: #aaa;
-        flex-direction: column;
-    }
-    .info-item {
-        margin-bottom: 20px;
-    }
-    .info-label {
-        font-weight: 600;
-        color: #888;
-        font-size: 0.85rem;
-        text-transform: uppercase;
-        margin-bottom: 5px;
-        display: block;
-    }
-    .info-value {
-        font-size: 1.1rem;
-        color: #222;
-        font-weight: 600;
-    }
-    .panel-section {
-        border-top: 1px dashed #eee;
-        padding-top: 30px;
-        margin-top: 30px;
-    }
-    .ingredients-table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    .ingredients-table th {
-        text-align: left;
-        color: #888;
-        font-weight: 600;
-        font-size: 0.85rem;
-        padding: 10px;
-        border-bottom: 2px solid #f8f9fa;
-    }
-    .ingredients-table td {
-        padding: 12px 10px;
-        border-bottom: 1px solid #f8f9fa;
-    }
-    .panel-section {
-        border-top: 1px dashed #eee;
-        padding-top: 30px;
-        margin-top: 30px;
-    }
-</style>
+<link rel="stylesheet" href="{{ asset('css/chef_recipe_show.css') }}">
 {% endblock %}
 
 {% block chef_content %}
@@ -193,3 +96,4 @@
         </div>
     </div>
 {% endblock %}
+
