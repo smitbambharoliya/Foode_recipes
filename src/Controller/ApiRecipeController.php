@@ -185,7 +185,7 @@ class ApiRecipeController extends AbstractController
 
 
 
-    #[Route('/api/recipe/{id}', name: 'api_recipe_update', methods: ['PUT'])]
+    #[Route('/api/recipe/{id}', name: 'api_recipe_update', methods: ['PUT','POST','GET'])]
     public function update(
         int $id,
         RecipeRepository $recipeRepository,

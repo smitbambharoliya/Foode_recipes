@@ -53,18 +53,12 @@ final class ChefController extends AbstractController
 
     #[Route('/chef/recipe/new', name: 'app_chef_recipe_new')]
     public function new(
-        EntityManagerInterface $entityManager,
         Request $request,
         RegionRepository $regionRepository,
-        FileUploader $fileUploader,
         RecipeService $recipeService,
-        RecipeRepository $recipeRepository
     ): Response {
 
         $dto = new RecipeInputDTO();
-
-
-
         $form = $this->createForm(RecipeType::class, $dto);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -112,7 +106,6 @@ final class ChefController extends AbstractController
         }
 
         $dto = new RecipeInputDTO();
-
         $dto->title = $recipe->getTitle();
         $dto->instructions = $recipe->getInstructions();
         $dto->baseServings = $recipe->getBaseServings();
@@ -158,4 +151,3 @@ final class ChefController extends AbstractController
         return $this->redirectToRoute('app_chef_recipe');
     }
 }
-// navi rechipe nakhi hake  aek navapagge ma  
