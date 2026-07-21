@@ -1,68 +1,80 @@
 # Foode Recipes
 
-## 📖 Project Title & Description
+Welcome to the **Foode Recipes** project! This is a modern backend application designed to manage recipes, ingredients, user reviews, and regional data, built with a robust REST API and an integrated administration dashboard.
 
-**Foode Recipes** is a robust culinary platform built to connect food enthusiasts and chefs. It provides an intuitive interface for chefs to share their culinary creations and for users to discover diverse recipes from around the globe. 
+## Overview
 
-The application allows users to explore recipes based on meal types, dietary preferences (veg/non-veg), and regional cuisines. Chefs have a dedicated dashboard to create, edit, and manage their recipe portfolios, complete with image uploads and detailed ingredient lists.
+Foode Recipes serves as the backend engine for a recipe application. It handles user authentication, exposes endpoints to fetch recipe data, and provides a fully-featured admin interface for content management. 
 
-## ✨ Key Features
+### Key Features
+- **RESTful API**: Exposes data endpoints (e.g., retrieving recipes) for frontend or mobile consumption.
+- **Admin Dashboard**: An intuitive administrative panel to manage all core data (Users, Recipes, Ingredients, Reviews, Regions, and Recipe Views).
+- **Authentication**: Secure JWT-based API authentication.
+- **API Documentation**: Automated OpenAPI/Swagger documentation.
 
-- **User & Chef Authentication:** Secure login and registration system with distinct roles for general users and chefs.
-- **Recipe Management:** Chefs can effortlessly add new recipes, upload food imagery, define servings, and provide step-by-step instructions.
-- **Categorization & Filtering:** Recipes are categorized by meal type (e.g., Breakfast, Lunch, Dinner), region/cuisine, and dietary preference (Vegetarian or Non-Vegetarian).
-- **Dynamic Form Handling:** Utilizes Data Transfer Objects (DTOs) and Symfony Forms for secure and robust data validation during recipe creation and editing.
-- **Admin Dashboard:** Integrated with EasyAdmin for streamlined management of the platform's data.
+## Tech Stack
 
-## 🛠 Tech Stack
+The project was built using the latest industry standards and frameworks:
+- **Language**: PHP 8.2+
+- **Framework**: Symfony 7.4
+- **ORM**: Doctrine (with Migrations)
+- **Admin Panel**: EasyAdmin Bundle 4+
+- **Security**: LexikJWTAuthenticationBundle
+- **API Docs**: NelmioApiDocBundle
 
-- **Backend Framework:** Symfony 7.4 (PHP 8.2+)
-- **Database:** MySQL / MariaDB (via Doctrine ORM 3)
-- **Templating Engine:** Twig
-- **Admin Panel:** EasyAdmin Bundle 5
-- **Assets:** Symfony AssetMapper
-- **Form Handling:** Symfony Forms with strict validation constraints
+## Core Entities (Database Architecture)
 
-## 🚀 Installation & Setup
+The system revolves around several core data models:
+- **User**: Represents application users and administrators.
+- **Recipe**: The core entity storing recipe details, instructions, and metadata.
+- **Ingredient**: Components required for the recipes.
+- **Region**: Categorizes recipes based on geographical or cultural regions.
+- **Review**: User feedback and ratings on recipes.
+- **RecipeView**: Tracks analytics and views for individual recipes.
 
-Follow these steps to get the project running on your local machine:
+## How This Was Built
 
-1. **Clone the repository** (if applicable) or navigate to the project directory:
-   ```bash
-   cd d:\xamppa\Foode_recipes
-   ```
+### 1. Foundation
+The project was initialized using the Symfony skeleton (`symfony/skeleton`). Essential packages like Doctrine, Security, and Maker bundles were added to form the foundation.
 
-2. **Install dependencies** using Composer:
+### 2. Database & Entities
+Entities were generated to map the database structure using Doctrine attributes. Relationships were established between Recipes, Ingredients, Users, and Reviews. Database migrations were then executed to synchronize the schema.
+
+### 3. API & Authentication
+- Added `lexik/jwt-authentication-bundle` to handle secure API login.
+- Built API controllers (e.g., `ApiRecipeController`) utilizing modern PHP 8 attributes (`#[Route]`) to serve JSON responses.
+- Configured Nelmio ApiDoc to automatically document the available API endpoints.
+
+### 4. Admin Dashboard
+- Installed `easycorp/easyadmin-bundle` to rapidly build a back-office.
+- Created `DashboardController` to act as the entry point and sidebar menu.
+- Created individual CRUD controllers (`UserCrudController`, `RecipeCrudController`, etc.) to automatically generate tables and forms for managing database entities.
+- Upgraded the EasyAdmin menu syntax to use the latest `MenuItem::linkTo()` method mapped directly to the generated CRUD controllers.
+
+## Running the Project Locally
+
+1. **Install Dependencies**: 
    ```bash
    composer install
    ```
-
-3. **Configure Environment Variables:**
-   - Copy the `.env` file to `.env.local` if it doesn't exist.
-   - Update the `DATABASE_URL` in `.env.local` with your local database credentials.
-   ```env
-   DATABASE_URL="mysql://root:@127.0.0.1:3306/foode_recipes?serverVersion=10.11.2-MariaDB&charset=utf8mb4"
-   ```
-
-4. **Create the Database and Run Migrations:**
+2. **Environment Variables**: Configure your database connection and JWT secrets in the `.env.local` file.
+3. **Run Migrations**:
    ```bash
-   php bin/console doctrine:database:create
    php bin/console doctrine:migrations:migrate
    ```
-
-5. **Start the Local Development Server:**
+4. **Start the Development Server**:
    ```bash
    symfony server:start
    ```
-   The application will be accessible at `http://127.0.0.1:8000`.
 
-## 🗄 Database Architecture
+## Changelog / Recent Changes
+*This section tracks the ongoing changes made to the project.*
 
-The database is designed around several core entities managed by Doctrine ORM:
+- **2026-07-20**: Initialized this README file.
+- **2026-07-20**: Fixed `linkToCrud` deprecation in `DashboardController.php` by migrating to the new `MenuItem::linkTo(CrudController::class)` syntax.
+- **2026-07-20**: Configured `form_login` in `security.yaml` and protected the `/admin` route so the login page works properly.
+- **2026-07-20**: Modified `DashboardController::index` to redirect directly to the `RecipeCrudController` instead of showing the default EasyAdmin welcome page.
+- **2026-07-20**: Fixed a Doctrine `[Semantical Error]` in `RecipeRepository` by updating queries to use the correct entity property `r.mealtype` instead of `r.meal_type`.
+- **2026-07-20**: Fixed Twig error `Key "reviews" for sequence/mapping...` by fixing `findTrendingByTime` to select the recipe entity under the `recipe` key instead of index `0`.
 
-- **User / Chef:** Handles authentication credentials, roles, and profile information. 
-- **Recipe:** The central entity storing recipe details such as title, instructions, base servings, meal type, veg/non-veg flag, and an image path.
-- **Region:** A taxonomy entity representing the geographical origin or cuisine style of a recipe (e.g., Italian, Indian, Mexican). Recipes hold a Many-to-One relationship with Regions.
-- **Ingredients (JSON/Array):** Stores the required ingredients for a recipe, associated with the recipe record.
-
-*(Note: Ensure you regularly back up your database and run `php bin/console doctrine:schema:validate` to keep your mapping and database in sync.)*
+*Enjoy building the Foode Recipes platform!*

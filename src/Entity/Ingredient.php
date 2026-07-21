@@ -20,9 +20,11 @@ class Ingredient
     private ?int $baseQuantity = null;
 
     #[ORM\Column(length: 50, nullable: true)]
+
     private ?string $unit = null;
 
     #[ORM\ManyToOne(inversedBy: 'ingredients')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Recipe $recipe = null;
 
     public function getId(): ?int

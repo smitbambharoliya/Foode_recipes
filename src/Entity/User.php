@@ -41,7 +41,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $name = null;
 
     #[ORM\Column(type: Types::BIGINT,nullable: true)]
-    private ?string $phone = null;
+    private ?string $phone = null;      
 
     #[ORM\Column(length: 255,nullable: true)]
     private ?string $gender = null;

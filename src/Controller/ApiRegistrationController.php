@@ -10,10 +10,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use OpenApi\Attributes as OA;
 
 final class ApiRegistrationController extends AbstractController
 {
     #[Route('/api/register', name: 'app_api_registration', methods:['POST'])]
+    #[OA\Tag(name: 'Recipes(login)')]
     public function register(
         Request $request,
         EntityManagerInterface $entityManager,

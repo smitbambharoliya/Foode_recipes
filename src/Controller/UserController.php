@@ -15,12 +15,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-
-
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class UserController extends AbstractController
 {
+    
     #[Route('/home',name:"app_home")]
+    #[IsGranted('ROLE_USER')]
     public function index(RecipeRepository $recipeRepository, 
     RegionRepository $regionRepository, 
     RecipeDateTimeHelper $recipeDateTimeHelper,  
@@ -61,6 +62,7 @@ final class UserController extends AbstractController
     }
 
     #[Route('/home/{id}',name:'app_home_show',requirements: ['id' =>'\d+'])]
+    #[IsGranted('ROLE_USER')]
     public function show(Request $request,
     RecipeRepository $recipeRepository,
     RecipeRecommendationHelper $recommendationHelper,
@@ -113,6 +115,7 @@ final class UserController extends AbstractController
     }
 
     #[Route('/api/recipe/{id}/scale', name: 'api_recipe_scale', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
     public function scale(int $id, Request $request, RecipeRepository $recipeRepository, RecipeScaler $recipeScaler): Response
     {
         $recipe = $recipeRepository->find($id);

@@ -27,15 +27,18 @@ class Recipe
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\NotBlank(message:'les instructions ne doivent pas etre vide')]
+    #[Assert\Length(min:20,minMessage:'les instructions doit contenir au moins 20 caracteres')]
     #[Groups(['recipe:read','recipe:write'])]
-   
     private ?string $instructions = null;
 
     #[ORM\Column(type: Types::INTEGER, options: ['unsigned' => true, 'default' => 1])]
+    #[Assert\NotBlank(message:'write the number to the how meny pepole can ite the food!')]
     #[Groups(['recipe:read','recipe:write'])]
-        private ?int $baseServings = null;
+    private ?int $baseServings = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Image(maxSize: '5M', mimeTypes: ['image/jpeg', 'image/png'], mimeTypesMessage: 'Please upload a valid JPEG or PNG image.')]
     #[Groups(['recipe:read','recipe:write'])]
     private ?string $image = null;
 
@@ -52,6 +55,7 @@ class Recipe
     private Collection $ingredients;
 
     #[ORM\ManyToOne(inversedBy: 'recipes', cascade: ['persist'])]
+    #[Assert\NotBlank(message:'select the Region! or weite the region name the where the recipe is origen.')]
     #[Groups(['recipe:read','recipe:write'])]
     private ?Region $region = null;
 
@@ -61,8 +65,6 @@ class Recipe
     #[ORM\OneToMany(targetEntity: RecipeView::class, mappedBy: 'recipe', cascade: ['persist', 'remove'])]
     #[Groups(['recipe:read','recipe:write'])]
     private Collection $recipeViews;
-
-    
 
     /**
      * @var Collection<int, Review>
@@ -74,7 +76,7 @@ class Recipe
     #[Groups(['recipe:read','recipe:write'])]
     #[Assert\NotBlank(message:'select The meal Type')]
     #[Assert\Choice(choices: ['Breakfast', 'Lunch', 'Dinner','Snack','Drinks','Dessert'], message:'this is not a valid meal type select on the breakfast,linch, dinner')]
-    private ?string $meal_type = null;
+    private ?string $mealtype = null;
 
     #[ORM\Column(type: 'datetime_immutable', nullable:true)]
     #[Groups(['recipe:read','recipe:write'])]
@@ -82,9 +84,8 @@ class Recipe
 
     #[ORM\Column]
     #[Groups(['recipe:read','recipe:write'])]
+    #[Assert\NotBlank(message:'select the type of recipe')]
     private ?bool $isVeg = null;
-
-
 
     public function __construct()
     {
@@ -231,9 +232,6 @@ class Recipe
         return $this;
     }
 
-    
-  
-
     /**
      * @return Collection<int, Review>
      */
@@ -266,12 +264,12 @@ class Recipe
 
     public function getMealType(): ?string
     {
-        return $this->meal_type;
+        return $this->mealtype;
     }
 
-    public function setMealType(string $meal_type): static
+    public function setMealType(string $mealtype): static
     {
-        $this->meal_type = $meal_type;
+        $this->mealtype = $mealtype;
 
         return $this;
     }
@@ -299,6 +297,4 @@ class Recipe
 
         return $this;
     }
-
-    
 }

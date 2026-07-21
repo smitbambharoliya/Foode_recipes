@@ -8,12 +8,14 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use Symfony\Component\HttpFoundation\Response;
 
+
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
-class chefController extends AbstractDashboardController
+class DashboardController extends AbstractDashboardController
 {
     public function index(): Response
     {
-        return parent::index();
+        $adminUrlGenerator = $this->container->get(\EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator::class);
+        return $this->redirect($adminUrlGenerator->setController(RecipeCrudController::class)->generateUrl());
 
         // Option 1. You can make your dashboard redirect to some common page of your backend
         //
@@ -40,6 +42,11 @@ class chefController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
-        // yield MenuItem::linkTo(SomeCrudController::class, 'The Label', 'fas fa-list');
+        yield MenuItem::linkTo(UserCrudController::class, 'Users', 'fas fa-user');
+        yield MenuItem::linkTo(RecipeCrudController::class, 'Recipes', 'fas fa-list');
+        yield MenuItem::linkTo(IngredientCrudController::class, 'Ingredients', 'fas fa-leaf');
+        yield MenuItem::linkTo(RecipeViewCrudController::class, 'RecipeViews', 'fas fa-eye');
+        yield MenuItem::linkTo(RegionCrudController::class, 'Regions', 'fas fa-map-marker');
+        yield MenuItem::linkTo(ReviewCrudController::class, 'Reviews', 'fas fa-star');
     }
 }

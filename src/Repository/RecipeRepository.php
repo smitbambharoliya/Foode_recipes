@@ -6,6 +6,7 @@ use App\Entity\Recipe;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @extends ServiceEntityRepository<Recipe>
@@ -69,11 +70,11 @@ class RecipeRepository extends ServiceEntityRepository
 
        $qb = $this->createQueryBuilder('r')
 
-                  ->addSelect( 'COUNT(v.id) as viewCount')
+                  ->select('r as recipe', 'COUNT(v.id) as viewCount')
 
                   ->leftJoin('r.recipeViews', 'v')
 
-                  ->where('r.meal_type = :mealType')
+                  ->where('r.mealtype = :mealType')
 
                   ->andWhere('v.viewedAt >= :todayStart AND v.viewedAt <= :todayEnd')
 
@@ -95,7 +96,7 @@ class RecipeRepository extends ServiceEntityRepository
 
                   ->select('r as recipe', '0 as viewCount')
 
-                  ->andWhere('r.meal_type = :mealType')
+                  ->andWhere('r.mealtype = :mealType')
 
                   ->setParameter('mealType', $curentMealType)
 
@@ -111,7 +112,7 @@ class RecipeRepository extends ServiceEntityRepository
     public function findRecommendationsByTime(string $curentMealType):array
     {
         return $this->createQueryBuilder('r')
-                    ->andWhere('r.meal_type = :mealType')
+                    ->andWhere('r.mealtype = :mealType')
                     ->setParameter('mealType',$curentMealType)
                     ->setMaxResults(5)
                     ->getQuery()
@@ -134,7 +135,7 @@ class RecipeRepository extends ServiceEntityRepository
       return $this->createQueryBuilder('r')
                   ->andWhere('r.region = :regionId')
                   ->andWhere('r.id != :currentRecipeId')
-                  ->andWhere('r.meal_type = :mealType')
+                  ->andWhere('r.mealtype = :mealType')
                   ->setParameter('regionId', $regionId)
                   ->setParameter('currentRecipeId', $currentRecipeId)
                   ->setParameter('mealType',$curentMealType)
@@ -149,7 +150,7 @@ class RecipeRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('r')
                     ->andWhere('r.chef = :chefId')
                     ->andWhere('r.id != :currentRecipeId')
-                    ->andWhere('r.meal_type = :mealType')
+                  ->andWhere('r.mealtype = :mealType')
                     ->setParameter('currentRecipeId', $currentRecipeId)
                     ->setParameter('mealType',$mealType)
                     ->setParameter('chefId',$chefId)
@@ -169,7 +170,32 @@ class RecipeRepository extends ServiceEntityRepository
                      ->getResult();
     }
 
+    public function findchefCreatedRecipe(UserInterface $chef): int
+    {
+       $totdayStart = new \DateTime('today 00:00:00');
+       $todayEnd = new \DateTime('today 23:59:59');
 
+        return (int) $this->createQueryBuilder('r')
+                    ->select('COUNT(r.id)')
+                    ->andWhere('r.chef = :chef')
+                    ->andWhere('r.createdAt >= :start')
+                    ->andWhere('r.createdAt <= :end')
+                    ->setParameter('chef', $chef)
+                    ->setParameter('start', $totdayStart)
+                    ->setParameter('end', $todayEnd)
+                    ->getQuery()
+                    ->getSingleScalarResult();
+    }
+
+    public function findAllWithIngredientsAndChef(): array
+    {
+        return $this->createQueryBuilder('r')
+                    ->leftJoin('r.ingredients','i')
+                    ->addSelect('i')
+                    ->leftJoin('r.chef','c')
+                    ->addSelect('c')
+                    ->getQuery()
+                    ->getResult();
+    }
 }
-
 

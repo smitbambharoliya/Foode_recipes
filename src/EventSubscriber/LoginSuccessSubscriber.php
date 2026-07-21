@@ -2,10 +2,8 @@
 
 namespace App\EventSubscriber;
 
-use Symfony\Component\BrowserKit\Request;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
 
@@ -34,7 +32,11 @@ class LoginSuccessSubscriber implements EventSubscriberInterface
 
         $user = $event->getUser();
 
-        if (in_array('ROLE_CHEF', $user->getRoles(), true)) {
+        if(in_array('ROLE_ADMIN',$user->getRoles())){
+            $response = new RedirectResponse($this->urlGenerator->generate('admin'));
+            $event->setResponse($response);
+        }
+        else if (in_array('ROLE_CHEF', $user->getRoles(), true)) {
             $response = new RedirectResponse($this->urlGenerator->generate('app_chef_dashboard'));
             $event->setResponse($response);
         } else {

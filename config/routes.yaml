@@ -6,3 +6,8 @@ controllers:
 api_login_check:
     path: /api/login_check
     defaults: { _controller: 'lexik_jwt_authentication.handler.authentication_success' }
+
+admin_bundle: 
+    resource: '../src/Controller/Admin/'
+    type: attribute
+    prefix: /admin

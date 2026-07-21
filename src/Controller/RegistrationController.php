@@ -40,9 +40,11 @@ class RegistrationController extends AbstractController
                 
                 if (in_array('ROLE_CHEF', $user->getRoles(), true)) {
                     return $this->redirectToRoute('app_chef_dashboard');
+                } elseif(in_array('ROLE_ADMIN', $user->getRoles(), true)) {
+                    return $this->redirectToRoute('app_admin_dashboard');
                 }
 
-                return $this->redirectToRoute('app_home');
+                return $this->redirectToRoute('app_landing');
             } else {
                 $this->addFlash('error', 'Please check the form for errors.');
             }
@@ -51,5 +53,12 @@ class RegistrationController extends AbstractController
         return $this->render('registration/register.html.twig', [
             'registrationForm' => $form,
         ]);
+    }
+
+    #[Route('/logout', name: 'app_logout', methods: ['GET'])]
+    public function logout(): Response
+    {
+        // This is handled by Symfony's logout listener, but we need a route for it.
+        throw new \Exception('This should never be reached!');
     }
 }
